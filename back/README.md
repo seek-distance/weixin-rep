@@ -1,6 +1,6 @@
 # back
 
-> A Vue.js project
+> 后台管理系统
 
 ## Build Setup
 
@@ -9,7 +9,7 @@
 npm install
 
 # serve with hot reload at localhost:8080
-npm run dev
+npm run dev 先到这一步就可以了
 
 # build for production with minification
 npm run build
