@@ -1,0 +1,279 @@
+/*
+**	共用CSS文件
+*/
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	word-wrap: break-word;
+}
+
+body {
+	font-size: 20px;
+	background-color: #f4f4f4;
+	min-width: 300px;
+}
+
+html,
+body,
+.wrapper {
+	height: 100%;
+}
+
+a,
+input,
+textarea {
+	text-decoration: none;
+	outline: 0;
+}
+
+ol,
+ul {
+	list-style: none;
+}
+
+li,
+img,
+label,
+input {
+	vertical-align: middle;
+}
+
+
+/*图标字体*/
+
+@font-face {
+	font-family: iconfont;
+	src: url(../fonts/iconfont1.eot?9owfml);
+	src: url(../fonts/iconfont1.eot?#iefix9owfml) format("embedded-opentype"), url(../fonts/iconfont2.woff?9owfml) format("woff"), url(../fonts/iconfont3.ttf?9owfml) format("truetype"), url(../fonts/iconfont4.svg?9owfml#icomoon) format("svg");
+	font-weight: 400;
+	font-style: normal
+}
+
+
+/* 以icon-开头，包含icon-的class */
+
+[class^=icon-],
+[class*="icon-"],
+.iconfont {
+	font-family: iconfont !important;
+	speak: none;
+	font-style: normal;
+	font-weight: 400;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+
+/*
+**	自适应样式单
+*/
+
+
+/* 720+ */
+
+@media only screen and (min-width:720px) {
+	body {
+		font-size: 20px;
+	}
+}
+
+
+/* 710 - 720 */
+
+@media only screen and (max-width: 720px) and (min-width: 710px) {
+	body {
+		font-size: 19.72222px;
+	}
+}
+
+
+/* 640 - 710 */
+
+@media only screen and (max-width: 710px) and (min-width: 640px) {
+	body {
+		font-size: 17.77778px;
+	}
+}
+
+
+/* 630 -640 */
+
+@media only screen and (max-width: 640px) and (min-width: 630px) {
+	body {
+		font-size: 17.5px;
+	}
+}
+
+
+/* 570 - 630 */
+
+@media only screen and (max-width: 630px) and (min-width: 570px) {
+	body {
+		font-size: 15.83333px;
+	}
+}
+
+
+/* 560 - 570 */
+
+@media only screen and (max-width: 570px) and (min-width: 560px) {
+	body {
+		font-size: 15.55556px;
+	}
+}
+
+
+/* 540 - 560 */
+
+@media only screen and (max-width: 560px) and (min-width: 540px) {
+	body {
+		font-size: 15px;
+	}
+}
+
+
+/* 480 - 540 */
+
+@media only screen and (max-width: 540px) and (min-width: 480px) {
+	body {
+		font-size: 13.33333px;
+	}
+}
+
+
+/* 470 - 480 */
+
+@media only screen and (max-width:480px) and (min-width:470px) {
+	body {
+		font-size: 13.05556px;
+	}
+}
+
+
+/* 400 - 470 */
+
+@media only screen and (max-width:470px) and (min-width:400px) {
+	body {
+		font-size: 11.11111px
+	}
+}
+
+
+/*360 - 400*/
+
+@media only screen and (max-width:400px) and (min-width:360px) {
+	body {
+		font-size: 10px
+	}
+}
+
+
+/*350 - 360*/
+
+@media only screen and (max-width:360px) and (min-width:350px) {
+	body {
+		font-size: 9.72222px
+	}
+}
+
+
+/* 320 - 350 */
+
+@media only screen and (max-width:350px) and (min-width:320px) {
+	body {
+		font-size: 8.88889px
+	}
+}
+
+
+/* 310 - 320 */
+
+@media only screen and (max-width:320px) and (min-width:310px) {
+	body {
+		font-size: 8.61111px
+	}
+}
+
+
+/* 300 - 310 */
+
+@media only screen and (max-width:310px) and (min-width:300px) {
+	body {
+		font-size: 8.33333px
+	}
+}
+
+
+/* 300- */
+
+@media only screen and (max-width:300px) {
+	body {
+		font-size: 8.33333px;
+	}
+}
+
+.main {
+	height: 100%;
+}
+
+object,
+embed {
+	-webkit-animation-duration: .001s;
+	-webkit-animation-name: playerInserted;
+	animation-duration: .001s;
+	animation-name: playerInserted;
+}
+
+@-webkit-keyframes playerInserted {
+	from {
+		opacity: 0.99;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes playerInserted {
+	from {
+		opacity: 0.99;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.no_order {
+	font-size: 1.5em;
+}
+.product_view .product_swipe img{
+	height: 29em;
+	width: 100%;
+}
+#goods-footer{
+	position: fixed;
+	height: 50px;
+	background: #fff;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+}
+#goods-footer a{
+	display: block;
+	width: 50%;
+	line-height: 50px;
+	color: #fff;
+	background: #fc6500;
+	text-align: center;
+	float: left;
+	font-size: 16px;
+}
+#goods-footer a:first-child{
+	background: #ff9900;
+}

@@ -1,0 +1,146 @@
+<!-- header start -->
+<div id="Cheader" style="">
+	<div id="header" class="header_03">
+		<div class="back">
+			<a ui-sref="home" class="arrow">首页</a>
+		</div>
+		<div class="tit" style="">
+			<h3 style="line-height: 2.55263em;">登录</h3>
+		</div>
+		<div class="nav">
+			<ul>
+				<li class="cart">
+					<a ui-sref="cart">购物车</a>
+					<span id="ShoppingCartNum" style="display:none"></span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<!-- header end -->
+
+<!-- wrapper start -->
+<div id="wrapper" class="xm_app">
+	<div id="viewport" class="viewport" style="background: transparent;">
+
+		<div id="crumbs" class="crumbs" style="display: none;">
+			<ul>
+				<li>
+					<a ui-sref="home"><span>首页</span></a>
+				</li>
+				<li>
+					<a href="javascript:;">登录</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="user_view_03">
+
+			<div class="box box_01">
+
+				<!-- 未登陆 -->
+				<div class="logout_box" ng-if="!isLogin">
+					<a href="login.html">
+						<div class="logout_txt">
+							<h3 class="userLogin">立即登录|注册</h3>
+							<p>享受更多贴心服务</p>
+						</div>
+					</a>
+				</div>
+
+				<!-- 已登陆 -->
+				<div class="login_box" ng-if="isLogin">
+					<a href="index.html">
+						<div class="login_txt">
+							<h3>236810227</h3>
+							<p class="icn" id="AccountLogoutBtn">点击退出</p>
+						</div>
+					</a>
+				</div>
+
+			</div>
+
+			<div class="box box_02 mb20" ng-if="isLogin">
+
+				<div class="user_nav list_nav mlr20">
+					<ul>
+						<li class="items">
+							<a class="lnk" href="order.html">
+								<div class="un un_01">订单查询</div>
+							</a>
+						</li>
+						<li class="items">
+							<a href="order_wait.html" class="userLogin lnk">
+								<div class="un un_02">待付款订单</div>
+							</a>
+						</li>
+						<li class="items">
+							<a href="order_logistics.html" class="userLogin lnk">
+								<div class="un un_03">物流查询</div>
+							</a>
+						</li>
+						<li class="items">
+							<a href="order_recharge.html" class="userLogin lnk">
+								<div class="un un_09">充值订单</div>
+							</a>
+						</li>
+					</ul>
+
+					<ul>
+						<li class="items">
+							<a href="coupon.html" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-f0297cf5af5c4a47', 'javascript:;', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '优惠券'])" class="userLogin lnk" data-stat-id="f0297cf5af5c4a47">
+								<div class="un un_04">优惠券</div>
+							</a>
+						</li>
+						<li class="items">
+							<a href="address.html" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-a9a24500da7c0e5c', 'javascript:;', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '地址管理'])" class="userLogin lnk" data-stat-id="a9a24500da7c0e5c">
+								<div class="un un_05">地址管理</div>
+							</a>
+						</li>
+						<li class="items">
+							<a href="service.html" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-6b19c29ef52ae705', 'javascript:;', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '售后服务单'])" class="userLogin lnk" data-stat-id="6b19c29ef52ae705">
+								<div class="un un_06">售后服务单</div>
+							</a>
+						</li>
+						<li class="items">
+							<a href="comment.html" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-40e7820363cc68e4', 'javascript:;', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '评价商品'])" class="userLogin lnk" data-stat-id="40e7820363cc68e4">
+								<div class="un un_10">评价商品</div>
+							</a>
+						</li>
+						<li class="items">
+							<a href="javascript:;" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-ffe9e139d4b791d0', 'javascript:;', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '我的收藏'])" class="userLogin lnk" data-stat-id="ffe9e139d4b791d0">
+								<div class="un un_14">我的收藏</div>
+							</a>
+						</li>
+					</ul>
+
+					<ul>
+						<li class="items">
+							<a class="lnk" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-458d874211556ed5', '/index.html#ac=mihome&amp;op=list', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '小米之家'])" href="/index.html#ac=mihome&amp;op=list" data-stat-id="458d874211556ed5">
+								<div class="un un_07">小米之家</div>
+							</a>
+						</li>
+						<li class="items">
+							<a class="lnk" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-e68bb47c0041dab5', '/index.html#ac=station&amp;op=list', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '服务网点'])" href="/index.html#ac=station&amp;op=list" data-stat-id="e68bb47c0041dab5">
+								<div class="un un_08">服务网点</div>
+							</a>
+						</li>
+						<li class="items">
+							<a class="lnk" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-bf052f50345fb6ba', '/v2.html#/security', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '防伪查询])" href="/v2.html#/security" data-stat-id="bf052f50345fb6ba">
+								<div class="un un_16">防伪查询</div>
+							</a>
+						</li>
+						<li class="items">
+							<a class="lnk" onclick="_msq.push(['trackEvent', 'e2a622d1b7caf838-508c6755e89189a1', '/v2.html#/service/exchange', 'pcpid']);_hmt.push(['_trackEvent', 'app数据', '我的账户', '售后政策])" href="/v2.html#/service/exchange" data-stat-id="508c6755e89189a1">
+								<div class="un un_15">售后政策</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+</div>

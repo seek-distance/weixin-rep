@@ -1,0 +1,101 @@
+<div id="Cheader" style="background: rgb(235, 236, 237);">
+	<div id="header" class="header_03">
+		<div class="back">
+			<a class="arrow">首页</a>
+		</div>
+		<div class="tit" style="">
+			<h3 style="line-height: 2.8;">全部订单</h3>
+		</div>
+		<div class="nav">
+			<ul>
+				<li class="cart">
+					<a>购物车</a>
+					<span id="ShoppingCartNum" style="display: none;"></span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div id="wrapper" class="xm_app">
+	<div id="viewport" class="viewport" style="display: block; background: transparent;">
+		<div id="crumbs" class="crumbs" style="display: none;">
+			<ul>
+				<li>
+					<a ui-sref="home"><span>首页</span></a>
+				</li>
+				<li>
+					<a>我的帐户</a>
+				</li>
+				<li>
+					<a href="javascript:;">订单查询</a>
+				</li>
+			</ul>
+		</div>
+		<div class="order_list mlr20">
+			<p class="gc mb20">
+				<img style="width:22px;height:22px" src="dist/images/sign_icon.png" alt=""> 
+				酒查查公司不会以任何理由要求您提供银行卡信息或支付额外费用，请谨防钓鱼链接或诈骗电话
+			</p>
+			<div class="box">
+				<div class="list_order list_order_tmp list_nav">
+					<ul id="OrderList">
+						<li>
+							<div class="order items">
+								<a href="order_info.html" class="lnk">
+									<div class="imgurl">
+										<img src="dist/images/order1.jpg">
+									</div>
+									<div class="order_info">
+										<dl> <dt class="add_time">订单日期：2015/05/20 </dt>
+											<dd class="order_id">订单编号：1150520620043248</dd>
+											<dd> 
+												<span class="goods_amount">总价：¥ 99.90</span>
+												<span class="order_type">状态：已收货</span> 
+											</dd>
+										</dl>
+									</div>
+								</a>
+							</div>
+							<div class="btns" style="display:none"> </div>
+						</li>
+						<li>
+							<div class="order items">
+								<a href="order_info.html" class="lnk">
+									<div class="imgurl"><img src="dist/images/order2.jpg"></div>
+									<div class="order_info">
+										<dl> <dt class="add_time">订单日期：2014/12/23 </dt>
+											<dd class="order_id">订单编号：1141223360019387</dd>
+											<dd> <span class="goods_amount">总价：¥ 59.00</span><span class="order_type">状态：已收货</span> </dd>
+										</dl>
+									</div>
+								</a>
+							</div>
+							<div class="btns" style="display:none"> </div>
+						</li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<div id="maskLoad" class="maskLoad" style="display:none;"><span>正在加载...</span></div>
+<div id="mask" class="mask hide"></div>
+<div class="pop_panel hide" id="pop_panel">
+	<div class="content">
+		<div class="bd giftCard_view">
+			<div class="gfc5">
+				<div class="b b1">
+					<p>提示</p>
+				</div>
+				<div class="b b2">
+					<p id="content"></p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<a id="CloseMaskBtn" class="close"></a>
+</div>
+<div id="popup" style="display:none">
+	<p></p>
+</div>

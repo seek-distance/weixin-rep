@@ -1,0 +1,57 @@
+var app=angular.module('app', ['ui.router']);
+
+app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $urlRouterProvider ) {
+	$urlRouterProvider.otherwise('/home');
+	$stateProvider
+	.state('home',{
+		url:'/home',
+		templateUrl:'dist/tpls/home.html',
+		controller:'home'
+	})
+	.state('cart',{
+		url:'/cart',
+		templateUrl:'dist/tpls/cart.html',
+		controller:'cart'
+	})
+	.state('order',{
+		url:'/order',
+		templateUrl:'dist/tpls/order.html',
+		controller:'order'
+	})
+	.state('user',{
+		url:'/user',
+		templateUrl:'dist/tpls/user.html',
+		controller:'user'
+	})
+	.state('order_info',{
+		url:'/order_info',
+		templateUrl:'dist/tpls/order_info.html',
+		controller:'user'
+	})
+	.state('search',{
+		url:'/search',
+		templateUrl:'dist/tpls/search.html',
+		controller:'search'
+	})
+	.state('category',{
+		url:'/category',
+		templateUrl:'dist/tpls/category.html',
+		controller:'category'
+	})
+	.state('good',{
+		url:'/good',
+		templateUrl:'dist/tpls/good.html',
+		controller:'good'
+	})
+	.state('login',{
+		url:'/login',
+		templateUrl:'dist/tpls/login.html',
+		controller:'login'
+	})
+	.state('list',{
+		url:'/list',
+		templateUrl:'dist/tpls/list.html',
+		controller:'list'
+	})
+}]);
+
