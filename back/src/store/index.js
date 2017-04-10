@@ -6,10 +6,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state:{
         username:'admin',
-        bread:[
-            {name:'网站信息',path:'/'},
-            {name:'基本设置',path:'/login'},
-        ]
+        showFix:false,
+        bread:[{ name: '用户管理', path: '/user'}]
     },
     mutations: {
         setBread(state,value){

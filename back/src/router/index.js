@@ -16,6 +16,7 @@ export default new Router({
       component: main,
       children:[
           {path:'/',component:user},
+          {path:'/user',component:user},
           {path:'/shop',component:shop},
           {path:'/classify',component:classify}
       ]

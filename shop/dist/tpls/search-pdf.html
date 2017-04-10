@@ -1,0 +1,29 @@
+<div class="search">
+	<div class="clearfix">
+		<input class="search pull-left" ng-model='searchPdf' type="text">
+		<button ng-touch="submit()" class="submit pull-left">搜索</button>
+	</div>
+	<p class="error text-error" ng-if='noList'>没有找到对应内容</p>
+	<ul class="downList" ng-if="showList">
+		<li class="item">			
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>作者</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="(k, val) in list">
+                            <td>{{val.maker}}</td>
+                            <td>
+                                <a href="{{val.link}}" target="_blank" class="download">下载</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+		</li>
+	</ul>
+</div>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)http://m.mi.com/index.html#ac=address&op=add -->
+<html>
+<div style="display: block; background: rgb(235, 236, 237);">
+    <div id="Cheader">
+        <div id="header" class="header_03">
+            <div class="back">
+                <a class="arrow">首页</a>
+            </div>
+            <div class="tit">
+                <h3>新增地址</h3>
+            </div>
+            <div class="nav">
+                <ul>
+                    <li class="cart">
+                        <a>购物车</a>
+                        <span id="ShoppingCartNum" style="display: none;"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="wrapper" class="xm_app">
+        <div id="viewport" class="viewport" style="background: transparent;">
+            <div id="crumbs" class="crumbs" style="display: none;">
+                <ul>
+                    <li><a><span>首页</span></a></li>
+                    <li><a>我的帐户</a></li>
+                    <li><a>收货地址</a></li>
+                    <li><a>新增地址</a></li>
+                </ul>
+            </div>
+            <div class="address_add mlr20 ">
+                <div class="box box_01">
+                    <div class="title">
+                        <h3>收货人姓名</h3> </div>
+                    <div class="input">
+                        <input type="text" placeholder="请填写真实姓名" id="consignee" maxlength="15"> </div>
+                </div>
+                <div class="box box_02">
+                    <div class="title">
+                        <h3>收货地址</h3> </div>
+                    <div class="box_02_01 h_box">
+                        <div class="flex_1">
+                            <div class="select">
+                                <div class="option">{{province == undefined ? '请选择省': province}}</div>
+                                <select id="province_id" ng-model='province'  ng-options="act for act in provinceList">
+                                    <!-- <option value="0">请选择省</option>
+                                    <option value="2">北京</option>
+                                    <option value="3">天津</option>
+                                    <option value="4">河北</option>
+                                    <option value="5">山西</option>
+                                    <option value="6">内蒙古</option>
+                                    <option value="7">辽宁</option>
+                                    <option value="8">吉林</option>
+                                    <option value="9">黑龙江</option>
+                                    <option value="10">上海</option>
+                                    <option value="11">江苏</option>
+                                    <option value="12">浙江</option>
+                                    <option value="13">安徽</option>
+                                    <option value="14">福建</option>
+                                    <option value="15">江西</option>
+                                    <option value="16">山东</option>
+                                    <option value="17">河南</option>
+                                    <option value="18">湖北</option>
+                                    <option value="19">湖南</option>
+                                    <option value="20">广东</option>
+                                    <option value="21">广西</option>
+                                    <option value="22">海南</option>
+                                    <option value="23">重庆</option>
+                                    <option value="24">四川</option>
+                                    <option value="25">贵州</option>
+                                    <option value="26">云南</option>
+                                    <option value="27">西藏</option>
+                                    <option value="28">陕西</option>
+                                    <option value="29">甘肃</option>
+                                    <option value="30">青海</option>
+                                    <option value="31">宁夏</option>
+                                    <option value="32">新疆</option> -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex_1">
+                            <div data-type="select" class="select">
+                                <div data-value="01" class="option">请选择市</div>
+                                <select id="city_id">
+                                    <option value="0">请选择市</option>
+                                    <option value="0">请选择市1</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box_02_02">
+                        <div data-type="select" class="select">
+                            <div data-value="01" class="option">请选择区</div>
+                            <select id="district_id" disabled="true">
+                                <option value="0">请选择区</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="box_02_03">
+                        <div class="textarea">
+                            <textarea placeholder="路名或街道地址，门牌号，不少于10个字" id="address" maxlength="120"></textarea>
+                        </div>
+                        <div class="error_tips" style="display: none">
+                            <p>错误提示信息</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box box_03">
+                    <div class="title">
+                        <h3>邮政编码</h3> </div>
+                    <div class="input">
+                        <input placeholder="邮政编码,为6位数字" id="zipcode" type="tel" maxlength="6"> </div>
+                    <div class="error_tips" style="display: none">
+                        <p>错误提示信息</p>
+                    </div>
+                </div>
+                <div class="box box_04">
+                    <div class="title">
+                        <h3>手机号码</h3> </div>
+                    <div class="input">
+                        <input placeholder="联系人电话，11位数字" id="tel" type="tel" maxlength="11"> </div>
+                </div>
+                <div class="box box_05"><a id="AddressAddBtn" class="button active_button">确认完成</a></div>
+            </div>
+        </div>
+    </div>
+</div>

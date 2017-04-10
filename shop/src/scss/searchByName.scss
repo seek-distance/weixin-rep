@@ -1,0 +1,49 @@
+.search{
+	padding:0 5px;
+	.search,.submit{
+		width: 80%;
+		height: 0.5rem;
+		display: block;
+		border-radius: 5px;
+		border:1px solid #ccc;
+	}
+	.search{
+		padding-left: 5px;
+		margin:5px 5px 5px 0;
+	}
+	.submit{
+		width: 15%;
+		border:1px solid #ccc;
+		border-radius:3px;
+		margin: 5px 0 ;
+	}
+	.error{
+		margin-top:200px;
+		text-align: center;
+		color: #f00;
+		p{
+			line-height: 30px;
+		}
+	}
+	.sell{
+		height: 1rem;
+		line-height: 1rem;
+		font-size: 0.3rem;
+		i{
+			padding:0 10px;
+		}
+	}
+	.item{
+		button{
+			font-size: 12px;
+			padding:3px 5px;
+			margin: 0;
+		}		
+	}
+	.downList{
+		margin-top: 10px;
+		.download{
+			color:#3ab54a;
+		}
+	}
+}

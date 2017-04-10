@@ -1,0 +1,36 @@
+.search {
+  padding: 0 5px; }
+  .search .search, .search .submit {
+    width: 80%;
+    height: 0.5rem;
+    display: block;
+    border-radius: 5px;
+    border: 1px solid #ccc; }
+  .search .search {
+    padding-left: 5px;
+    margin: 5px 5px 5px 0; }
+  .search .submit {
+    width: 15%;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin: 5px 0; }
+  .search .error {
+    margin-top: 200px;
+    text-align: center;
+    color: #f00; }
+    .search .error p {
+      line-height: 30px; }
+  .search .sell {
+    height: 1rem;
+    line-height: 1rem;
+    font-size: 0.3rem; }
+    .search .sell i {
+      padding: 0 10px; }
+  .search .item button {
+    font-size: 12px;
+    padding: 3px 5px;
+    margin: 0; }
+  .search .downList {
+    margin-top: 10px; }
+    .search .downList .download {
+      color: #3ab54a; }

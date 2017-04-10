@@ -1,0 +1,43 @@
+<div class="search">
+    <div class="clearfix">
+        <input class="search pull-left" ng-click="noList = false" ng-model='searchName' type="text">
+        <button ng-touch="submit()" class="submit pull-left">搜索</button>
+    </div>
+    <div class="error text-error" ng-if='noList'>
+        <p>没有找到部件{{searchName}}，麻烦联系客服查询</p>
+        <a href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect" class="btn btn-default">联系客服</a>
+    </div>
+    <ul ng-if="showList">
+        <li class="item" ng-repeat="(key, value) in list">
+            <div class="sell">
+                <i class="fa fa-user-circle"></i>{{value.name}}
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>生产厂商</th>
+                            <th>价格</th>
+                            <th>价格梯度</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="(k, val) in value.parts">
+                            <td>{{val.maker}}</td>
+                            <td>
+                                <p ng-repeat="(i, v) in val.prices" ng-bind="v.price | changRate:v.currency"></p>
+                            </td>
+                            <td>
+                                <p ng-repeat="(i, v) in val.prices" ng-bind="v.amount + '+'"></p>
+                            </td>
+                            <td>
+                                <button class="btn btn-info">加入购物车</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </li>
+    </ul>
+</div>

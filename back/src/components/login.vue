@@ -1,54 +1,94 @@
 <template>
-    <div>
-        <div class="bg"></div>
-        <div class="container">
-            <div class="line bouncein">
-                <div class="xs6 xm4 xs3-move xm4-move">
-                    <div style="height:150px;"></div>
-                    <div class="media media-y margin-big-bottom">
-                    </div>
-                    <form action="index.html"
-                          method="post">
-                        <div class="panel loginbox">
-                            <div class="text-center margin-big padding-big-top">
-                                <h1>后台管理中心</h1></div>
-                            <div class="panel-body"
-                                 style="padding:30px; padding-bottom:10px; padding-top:10px;">
-                                <div class="form-group">
-                                    <div class="field field-icon-right">
-                                        <input type="text"
-                                               class="input input-big"
-                                               name="name"
-                                               placeholder="登录账号"
-                                               data-validate="required:请填写账号" />
-                                        <span class="icon icon-user margin-small"></span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="field field-icon-right">
-                                        <input type="password"
-                                               class="input input-big"
-                                               name="password"
-                                               placeholder="登录密码"
-                                               data-validate="required:请填写密码" />
-                                        <span class="icon icon-key margin-small"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="padding:30px;">
-                                <input type="submit"
-                                       class="button button-block bg-main text-big input-big"
-                                       value="登录">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="login-bg">
+	<div class="login-box" v-show="!update">
+		<form>
+			<div class="login-username login-item clearfix">
+				<span class="pull-left">用户名</span>
+				<input class="pull-left" type="text" v-model="username">
+			</div>		
+			<div class="login-password login-item clearfix">
+				<span class="pull-left">密码</span>
+				<input class="pull-left" type="password" v-model="password">
+			</div>
+			<div class="login-error">
+				<span v-show="!success" class="text-error">账号或密码错误</span>
+			</div>
+			<el-button @click="submit()" class="login-submit btn btn-info">登录</el-button>
+		</form>		
+	</div>
+	<div class="update-box" v-show="update">
+		<form>
+			<div class="login-item clearfix">
+				<span class="pull-left">原密码</span>
+				<input class="pull-left" type="password" v-model="oldPwd">
+			</div>
+			<div class="login-item clearfix">
+				<span class="pull-left">新密码</span>
+				<input class="pull-left" type="password" v-model="newPwd">
+			</div>
+			<button style="display: block;margin:0 auto;width: 100px;height: 40px;" @click="updatePwd()" class="btn btn-info">修改</button>
+		</form>		
+	</div>
+</div>
 </template>
 <script>
     export default{
-        name:'login',
+        data(){
+            return{
+                update:false,
+                success:true
+            }
+        },
+        methods: {
+            submit(){
+
+            },
+            updatePwd(){
+
+            }
+        }
     }
 </script>
+<style scoped>
+.login-bg{
+	width: 100%;
+	height: 100%;
+	background: url('../assets/images/bg.jpg');
+	background-size: cover;
+	position: absolute;
+}
+.login-box,.update-box{
+	height: 200px;
+	width: 400px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%,-50%);
+	background: #fff;
+	border-radius: 10px;
+	padding-top: 30px;
+}
+.login-item{
+	height: 45px;
+}
+.login-item span{
+	width: 30%;
+	text-align: right;
+	padding-right: 20px;
+}
+.login-item input{
+	width: 60%;
+}
+.login-box .login-submit{
+	width: 100px;
+	margin:0 auto;
+	display: block;
+}
+.login-error{
+	color: #f00;
+	height: 30px;
+	text-align: center;
+}
+
+
+</style>

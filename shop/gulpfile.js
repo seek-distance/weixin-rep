@@ -7,6 +7,7 @@ var concat=require('gulp-concat');		//文件合并
 var jshint=require('gulp-jshint');		//js代码检测
 var autoprefixer=require('gulp-autoprefixer');	//自动处理浏览器前缀
 var plumber = require('gulp-plumber');
+var sass=require('gulp-sass');
 
 
 //搭建服务器并自动刷新
@@ -18,21 +19,46 @@ gulp.task('webserver',function() {
 
 //刷新页面
 gulp.task('reload',function(){
-	gulp.src('*')
-	.pipe(connect.reload());
+	setTimeout(function(){
+		gulp.src('*')
+		.pipe(connect.reload());
+	},300)	
+})
+
+gulp.task('changeToCss',function(){
+	gulp.src('src/scss/*.scss')
+	.pipe(sass().on('error',sass.logError))
+	.pipe(autoprefixer({		//自动添加前缀
+		browers:['5%','Android >=2.3']
+	}))
+	.pipe(gulp.dest('src/css'));	
 })
 
 //css自动添加前缀，整合，压缩 
 gulp.task('concat-css',function(){
 	gulp.src('src/css/*.css')
 	.pipe(plumber())
-	/*.pipe(autoprefixer({		//自动添加前缀
+	.pipe(autoprefixer({		//自动添加前缀
 		browers:['5%','Android >=2.3']
-	}))*/
+	}))
 	.pipe(concat('all.css'))		//合并css并命名为all.css
 	.pipe(gulp.dest('dist/css'))
 	.pipe(minifyCss())			//压缩
 	.pipe(rename('all.min.css'))	//重命名
+	.pipe(gulp.dest('dist/css'));
+});
+
+//静态资源css自动添加前缀，整合，压缩 
+gulp.task('concat-staticCSS',function(){
+	gulp.src('src/css/static/*.css')
+	.pipe(plumber())
+	/*.pipe(autoprefixer({		//自动添加前缀
+		browers:['5%','Android >=2.3']
+	}))*/
+	.pipe(concat('static.css'))		//合并css并命名为all.css
+	.pipe(gulp.dest('dist/css'))
+	.pipe(minifyCss())		//压缩
+	.pipe(rename('static.min.css'))	//重命名
 	.pipe(gulp.dest('dist/css'));
 });
 
@@ -59,9 +85,11 @@ gulp.task('jsHint',function(){
 
 //监听文件变化
 gulp.task('watch',function(){
-	gulp.watch('src/js/*.js',['concat-js','jsHint','reload']);
-	gulp.watch('src/css/*.css',['concat-css','reload']);
-	gulp.watch('*/*/*',['reload']);
+	gulp.watch('src/js/*.js',['concat-js','jsHint']);
+	gulp.watch('src/scss/*',['changeToCss']);
+	gulp.watch('src/css/*',['concat-css']);
+	gulp.watch('src/css/static/*.css',['concat-staticCSS']);
+	gulp.watch('dist/*/*',['reload']);
 });
 
-gulp.task('default',['webserver','concat-css','concat-js','jsHint','watch']);
+gulp.task('default',['webserver','changeToCss','concat-css','concat-staticCSS','concat-js','jsHint','watch']);

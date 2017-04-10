@@ -16,13 +16,23 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-dialog title="提示" :modal-append-to-body="false" :show-close='dialog.showClose' v-model="dialog.changeDialog">
-            <div>
-                <span>类名</span>
-                <el-input placeholder='请输入类名' :disabled="true" :value='dialog.value'></el-input>
+        <el-dialog title="修改分类" :modal-append-to-body="false" v-model="dialog.changeDialog">
+            <div class="dialog-item clearfix">
+                <span class="fl">类名：</span>
+                <el-input class="fl" style="width:75%;" placeholder='请输入类名' :disabled="dialog.classAble" :value='dialog.class'></el-input>
+            </div>
+            <div class="dialog-item clearfix">
+                <span class="fl">包含类名：</span>
+                <div class="innerClass fl">
+                    <div v-for="(val,i) in dialog.innerClass">
+                        <el-input placeholder='请输入类名' :value='val'></el-input>
+                        <i @click="removeClass(i)" class="el-icon-close"></i>
+                    </div>   
+                </div>                
             </div>
             <span slot="footer"
                 class="dialog-footer">
+                <el-button type='success' @click="addClass">增加类</el-button>
                 <el-button @click="dialog.changeDialog = false">取 消</el-button>
                 <el-button type="primary" @click="dialog.changeDialog = false">确 定</el-button>
             </span>
@@ -35,8 +45,10 @@ export default {
     data() {
         return {
             dialog:{
+                classAble:true,
                 changeDialog : false,
-                value:'示例'
+                class:'示例',
+                innerClass:['1','2','3']
             },
             
             tableData: [
@@ -54,6 +66,14 @@ export default {
                 }
             ]
         }
+    },
+    methods: {
+        addClass(){
+            this.dialog.innerClass.push('');
+        },
+        removeClass(i){
+            this.dialog.innerClass.splice(i,1);
+        }
     }
 }
 </script>
@@ -62,6 +82,26 @@ export default {
     span {
         color: #FF4949;
         cursor: pointer;
+    }
+}
+.dialog-item{
+    margin-bottom:10px;
+    span{
+        line-height: 36px;
+        padding-right:5px;
+        width: 20%;
+        text-align: right;
+    }
+    .innerClass{
+        width:75%;
+        .el-input{
+            margin:0 5px 5px 0;
+            width:90%;
+        }
+        i{
+            color:#FF4949;
+            cursor:pointer;
+        }
     }
 }
 </style>

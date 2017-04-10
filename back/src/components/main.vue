@@ -17,33 +17,37 @@
         </div>
         <div class="content">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item v-for="val in bread" :to='val.path'>{{val.name}}</el-breadcrumb-item>
+                <el-breadcrumb-item @click.native='change(0)' :to="{ path: '/user' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item v-for="(val,i) in bread" :to='val.path'>{{val.name}}</el-breadcrumb-item>
             </el-breadcrumb>
             <div>
                 <router-view></router-view>
             </div>
         </div>
-        
+        <div class="fix" v-if='showFix'>
+            <i class="el-icon-loading"></i>
+        </div>
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import router from '../router'
 export default {
     name: 'hello',
     data() {
         return {
             nav: [
-                { name: '用户管理', path: '/' },
-                { name: '商品管理', path: 'shop' },
-                { name: '分类管理', path: 'classify' }
-            ]
+                { name: '用户管理', path: '/user'},
+                { name: '商品管理', path: 'shop'},
+                { name: '分类管理', path: 'classify'}
+            ],
         }
     },
     computed: mapState({
         bread: 'bread',
-        username: 'username'
+        username: 'username',
+        showFix: 'showFix',
     }),
     methods: {
         //改变面包屑
@@ -52,20 +56,10 @@ export default {
             this.$store.commit('setBread', bread);
         }
     },
-    mounted() {
-        var self = this;
-        changeBread();
-
-        function changeBread() {
-            self.nav.forEach(function (ele, i) {
-                if (ele.path == self.$route.path.slice(1)) {
-                    self.change(i);
-                    return;
-                }
-            });
-            self.change(0);
+    mounted () {
+        if(this.$route.path == '/'){
+            router.push('user');
         }
-
     }
 }
 </script>
@@ -76,7 +70,7 @@ $background:#1c2b36;
 .leftnav {
     background: $background;
     width: 20%;
-    position: absolute;
+    position: fixed;
     left:0;
     bottom:0;
     top:60px;
@@ -93,7 +87,7 @@ $background:#1c2b36;
         line-height: 50px;
         text-align: center;
         text-decoration: none;
-        &:hover{
+        &:hover,&.router-link-active{
             background: #fff;
             color: #333;
         }
@@ -107,6 +101,7 @@ $background:#1c2b36;
 }
 .content{
     padding-left:21%; 
+    padding-top: 60px;
     .el-breadcrumb{
         font-size: 17px;
         line-height: 50px;
@@ -121,6 +116,8 @@ $background:#1c2b36;
     height: 60px;
     color: #fff;
     padding: 0 15px 0 30px;
+    position: fixed;
+    top:0;
     z-index: 99;
 }
 
@@ -153,5 +150,22 @@ $background:#1c2b36;
     left: 0;
     height: 100%;
     color: #fff;
+}
+.fix{
+    position: fixed;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    background: rgba(30, 30, 30, 0.3);
+    z-index: 100;
+    i{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform: translate(-50%,-50%);
+        color:#fff;
+        font-size:30px;
+    }
 }
 </style>

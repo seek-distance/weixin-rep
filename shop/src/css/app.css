@@ -23,7 +23,7 @@ body,
 .wrapper {
 	height: 100%;
 }
-
+a{color: #333;}
 a,
 input,
 textarea {
@@ -277,3 +277,32 @@ embed {
 #goods-footer a:first-child{
 	background: #ff9900;
 }
+.ui-button {
+    display: block;
+    -webkit-border-radius: .1rem;
+    -moz-border-radius: .1rem;
+    -ms-border-radius: .1rem;
+    -o-border-radius: .1rem;
+    border-radius: .1rem;
+    background-color: #FF5722;
+    text-align: center;
+    height: 1rem;
+    line-height: 1rem;
+    border: 1px solid #FF5722;
+}
+
+.page-order-checkout-wrap .ui-radio-button li {
+    margin-bottom: .06rem;
+}
+.ui-radio-button li {
+    float: left;
+    margin-right: .1rem;
+}
+.no_order {
+    font-size: 1.5em;
+}
+.list_address .items{
+	padding-top: 1.9em;
+	padding-bottom: 1.9em;
+}
+
