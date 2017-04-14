@@ -2,7 +2,7 @@
     <div class="page-order-checkout" data-log="用户结算">
         <div class="header">
             <div class="left">
-                <a ng-touch="goback()" class="home">
+                <a onclick="javascript: window.history.go(-1);return false;" ng-touch="goback()" class="home">
                     <i style="font-size: 15px;line-height: 32px;" class="fa fa-chevron-left"></i>
                 </a>
             </div>
@@ -116,7 +116,7 @@
                     <p>配送至：<span ng-bind="address.addr"></span></p>
                 </div>
                 <div class="ui-box">
-                    <div class="b71 ui-box-flex"><span>共<span ng-bind="totalNum"></span>件 合计: </span><strong ng-bind="shopTotalPrice"></strong></div>
+                    <div class="b71 ui-box-flex"><span>共<span ng-bind="totalNum"></span>件 合计: </span><strong ng-bind="shopTotalPrice.toFixed(2)"></strong></div>
                     <div class="b72 ui-box-flex"><a ng-touch='pay()' class="ui-button"><span>去付款</span></a>
                     </div>
                 </div>

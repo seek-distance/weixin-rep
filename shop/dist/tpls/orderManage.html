@@ -52,7 +52,7 @@
                                             <dt class="add_time">订单日期：{{value.createdAt.slice(0,10)}} </dt>
                                             <dd class="order_id">订单编号：{{value._id}}</dd>
                                             <dd>
-                                                <div class="table-responsive">
+                                                <div>
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
@@ -93,7 +93,7 @@
             <p>订单日期：{{currentShop.createdAt.slice(0,10)}}</p>
             <p>订单编号：{{currentShop._id}}</p>
             <div>
-                <div class="table-responsive">
+                <div>
                     <table class="table">
                         <thead>
                             <tr>
@@ -115,10 +115,10 @@
             <p>
                 总价：{{currentShop.totalPrice}} &nbsp;&nbsp;&nbsp;
                 <span class="order_type">
-			状态：
-			<span ng-if="currentShop.status == 'not-paid'">未付款</span>
-                <span ng-if="value.status == 'paid'">已付款</span>
-                <span ng-if="value.status == 'expressed'">已发货</span>
+					状态：
+					<span ng-if="currentShop.status == 'not-paid'">未付款</span>
+	                <span ng-if="value.status == 'paid'">已付款</span>
+	                <span ng-if="value.status == 'expressed'">已发货</span>
                 </span>
             </p>
             <p>

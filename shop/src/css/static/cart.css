@@ -281,7 +281,7 @@ body,
 }
 
 .cart-index-wrap .item .choose.status-0 {
-    background: url(//s1.mi.com/m/images/m/check_normal.png) 50% 50% no-repeat;
+    background: url(../images/check_normal.png) 50% 50% no-repeat;
     -webkit-background-size: .4rem .4rem;
     -moz-background-size: .4rem .4rem;
     -ms-background-size: .4rem .4rem;
@@ -290,7 +290,7 @@ body,
 }
 
 .cart-index-wrap .item .choose.status-1 {
-    background: url(//s1.mi.com/m/images/m/check_press.png) 50% 50% no-repeat;
+    background: url(../images/check_press.png) 50% 50% no-repeat;
     -webkit-background-size: .4rem .4rem;
     -moz-background-size: .4rem .4rem;
     -ms-background-size: .4rem .4rem;

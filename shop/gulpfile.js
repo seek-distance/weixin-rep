@@ -13,7 +13,8 @@ var sass=require('gulp-sass');
 //搭建服务器并自动刷新
 gulp.task('webserver',function() {
 	connect.server({
-		livereload:true
+		livereload:true,
+		port:8088
 	})
 });
 
@@ -45,7 +46,7 @@ gulp.task('concat-css',function(){
 	.pipe(gulp.dest('dist/css'))
 	.pipe(minifyCss())			//压缩
 	.pipe(rename('all.min.css'))	//重命名
-	.pipe(gulp.dest('dist/tpls'));
+	.pipe(gulp.dest('dist/css'));
 });
 
 //静态资源css自动添加前缀，整合，压缩 
@@ -67,7 +68,7 @@ gulp.task('concat-js',function(){
 	gulp.src('src/js/*.js')
 	.pipe(plumber())
 	.pipe(concat('all.js'))		//合并js并命名为all.js
-	.pipe(gulp.dest('dist/tpls'))
+	.pipe(gulp.dest('dist/js'))
 	
 	.pipe(uglify())		//压缩
 	.pipe(rename('all.min.js'))		//重命名

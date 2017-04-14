@@ -9,11 +9,11 @@
         <a ng-click='concat()' class="btn btn-default">联系客服</a>
     </div>
     <ul ng-if="showList">
-        <li class="item" ng-repeat="(key, value) in list">
+        <li class="item" ng-repeat="(key, value) in list track by key">
             <div class="sell">
                 <i class="fa fa-user-circle"></i>{{value.name}}
             </div>
-            <div class="table-responsive">
+            <div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -42,4 +42,13 @@
             </div>
         </li>
     </ul>
+</div>
+<div class="message">
+    <div class="content">
+        <p class="text-success text-center">加入成功</p>
+        <div>
+            <a ui-sref="cart" class="btn btn-success">前往购物车</a>
+            <button ng-touch="closeFix()" class="btn btn-success">继续选购</button>
+        </div>
+    </div>
 </div>

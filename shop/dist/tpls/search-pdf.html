@@ -1,12 +1,12 @@
 <div class="search">
-	<div class="clearfix">
-		<input placeholder="搜pdf" class="search pull-left" ng-model='searchPdf' type="text">
-		<button ng-touch="submit()" class="submit pull-left">搜索</button>
-	</div>
+	<form class="clearfix">
+		<input placeholder="搜pdf" ng-change="noList=false" class="search pull-left" ng-model='searchPdf' type="text">
+		<button ng-click="submit()" class="submit pull-left">搜索</button>
+	</form>
 	<p class="error text-error" ng-if='noList'>没有找到对应内容</p>
 	<ul class="downList" ng-if="showList">
 		<li class="item">			
-            <div class="table-responsive">
+            <div>
                 <table class="table">
                     <thead>
                         <tr>

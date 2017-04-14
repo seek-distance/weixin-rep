@@ -1,8 +1,11 @@
-app.controller('index', ['$scope','$location','appid','weixin', function($scope,$location,appid,weixin){
+app.controller('index', ['$scope','$location','appid','weixin','dailog', function($scope,$location,appid,weixin,dailog){
 	/*if(!weixin.isweixin()){
 		location.url='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
 	}*/
 	console.log(weixin.getUserInfo());
+	$scope.closeFix=function(){
+		dailog.hide();
+	}
 }]);
 
 app.controller('home', ['$scope', function($scope){
@@ -73,8 +76,9 @@ app.controller('cart', ['$scope','cart','weixin','$rootScope','$state', function
 
 }]);
 
-app.controller('order', ['$scope','order','weixin','$state', function($scope,order,weixin,$state){
+app.controller('order', ['$scope','order','weixin','$state','dailog', function($scope,order,weixin,$state,dailog){
 	order.getOrdersById(weixin.getUserInfo().openId).then(function(obj){
+		dailog.hideLoad();
 		$scope.orders=obj.data;		
 	})
 	$scope.current=false;
@@ -122,6 +126,7 @@ app.controller('orderManage', ['$scope','order','weixin','$state','dailog', func
 			    id:$scope.id
 			}
 		}).then(function(obj){
+			dailog.hideLoad();
 			var data=obj.data;
 			if (data.msg=='ok') {
 				dailog.show();
@@ -131,10 +136,6 @@ app.controller('orderManage', ['$scope','order','weixin','$state','dailog', func
 	$scope.closeFix=function(){
 		$state.go('orderManage');
 	}
-}]);
-
-app.controller('user', ['$scope','$rootScope', function($scope,$rootScope){
-	$rootScope.isLogin=true;
 }]);
 
 app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder', function($scope,$rootScope,weixin,dailog,checkOrder){
@@ -167,6 +168,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
 		    totalPrice:$scope.shopTotalPrice,
 		    ownerOpenId:weixin.getUserInfo().openId
 		}).then(function(obj){
+			dailog.hideLoad();
 			if (obj.data.msg=='ok') {
 				dailog.show();
 			}
@@ -178,6 +180,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
 		$scope.address = $rootScope.currentAddr;
 	}else{
 		weixin.getAddr(weixin.getUserInfo().openId).then(function(obj){
+			dailog.hideLoad();
 			$rootScope.AllAddr = obj.data[0].receiveAddrs;
 			$scope.address = $rootScope.AllAddr[0];
 		})
@@ -203,10 +206,11 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
 
 }]);
 
-app.controller('address', ['$scope','weixin','$rootScope','$state', function($scope,weixin,$rootScope,$state){
+app.controller('address', ['$scope','weixin','$rootScope','$state','dailog', function($scope,weixin,$rootScope,$state,dailog){
 	var openId=weixin.getUserInfo().openId;
 
 	weixin.getAddr(openId).then(function(obj){
+		dailog.hideLoad();
 		$scope.address=obj.data[0].receiveAddrs;
 		$rootScope.AllAddr = $scope.address;
 	})
@@ -240,6 +244,7 @@ app.controller('address_add', ['$scope','address_add','weixin','dailog', functio
 				zipCode:$scope.zipCode
 			}
 		}).then(function(obj){
+			dailog.hideLoad();
 			var data=obj.data;
 			if (data.msg == 'ok') {
 				dailog.show('新增成功');
@@ -248,11 +253,12 @@ app.controller('address_add', ['$scope','address_add','weixin','dailog', functio
 	}
 }]);
 
-app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin', function($scope,searchByName,$rootScope,weixin){
+app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','dailog', function($scope,searchByName,$rootScope,weixin,dailog){
 	$scope.showList=false;
 	$scope.noList=false;
 
 	searchByName.rate().success(function(data){
+		dailog.hideLoad();
 		$rootScope.rate=data;
 		$rootScope.rate.push({name:'RMB',rate:100})
 	});
@@ -262,6 +268,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin', f
 			return;
 		}
 		searchByName.search({part:$scope.searchName}).success(function(data){
+			dailog.hideLoad();
 			if (!data.distributors || data.distributors.length == 0 && data.icKeys.length == 0) {
 				$scope.showList = false;
 				$scope.noList=true;
@@ -269,20 +276,34 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin', f
 			}else{
 				$scope.noList=false;
 				$scope.showList = true;
-				if (data.distributors.length<3) {
-					var num = 3 - data.distributors.length;
-					Array.prototype.push.apply(data.distributors,data.icKeys.slice(0,num));
+				for (var i = 0; i < data.icKeys.length; i++) {
+					if(data.icKeys[i].name=='云汉芯城'){
+						data.icKeys[i].name='ic购商城';
+						data.distributors.push(data.icKeys[i]);
+					}
 				}
+				var key=0;
+				while (data.distributors.length<3) {
+					if (!data.icKeys[key])	break;
+					if (!searchByName.hasItem(data.distributors,data.icKeys[key])) {
+						data.distributors.push(data.icKeys[key]);
+					}
+					key++;							
+				}
+				console.log(data.distributors);
 				$scope.list=searchByName.changePrice(data.distributors);
-			}
-			console.log($scope.list);		
+			}		
 		});
 	};
 
 	$scope.concat=function(){
 		var openId=weixin.getUserInfo().openId;
-		searchByName.concat({openId:openId});
-		location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+		searchByName.concat({openId:openId}).then(function(obj){
+			dailog.hideLoad();
+			if (obj.status == '200') {
+				location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+			}
+		});
 		
 	}
 
@@ -291,7 +312,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin', f
 		data.name=$scope.list[firstKey].name;
 		data.shopName=$scope.searchName;
 		data.singlePrice=data.prices[0].changePrice;
-		data.selected=false;
+		data.selected=true;
 		var cart=weixin.getUserInfo().cart;
 
 		var hasShop=$scope.hasShop(data.maker,data.name);
@@ -302,6 +323,9 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin', f
 			cart.push(data);
 		}
 		weixin.setUserInfo('cart',cart);
+		setTimeout(function(){
+			dailog.show();
+		},300)		
 	}
 
 	$scope.hasShop=function(maker,name){
@@ -315,13 +339,14 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin', f
 
 }]);
 
-app.controller('searchByPdf', ['$scope','searchPdf', function($scope,searchPdf){
+app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,searchPdf,dailog){
 	$scope.submit=function(){
 		if (!$scope.searchPdf) {
 			return;
 		}
 		searchPdf.search({part:$scope.searchPdf}).success(function(data){
-			if (!data || data.pdfs.length == 0) {
+			dailog.hideLoad();
+			if (!data  || data.pdfs.length == 0) {
 				$scope.showList = false;
 				$scope.noList=true;
 				return;
@@ -334,13 +359,14 @@ app.controller('searchByPdf', ['$scope','searchPdf', function($scope,searchPdf){
 	};
 }]);
 
-app.controller('contact', ['$scope','contact','weixin', function($scope,contact,weixin){
+app.controller('contact', ['$scope','contact','weixin','dailog', function($scope,contact,weixin,dailog){
 	$scope.success=false;
 	$scope.submit=function(){
 		contact.submit({
 			openId:weixin.getUserInfo().openId,
 			phone:$scope.tel
 		}).then(function(obj){
+			dailog.hideLoad();
 			if (obj.data.msg == 'ok') {
 				$scope.success=true;
 			}else{

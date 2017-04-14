@@ -18,7 +18,7 @@ angular.module("ngTouch", [])
     return {
         controller: ["$scope", "$element", function ($scope, $element) {
 
-            $element.bind("touchstart", onTouchStart);
+            $element.bind("touchend", onTouchStart);
             function onTouchStart(event) {
                 var method = $element.attr("ng-touch");
                 $scope.$apply(method);
@@ -86,11 +86,6 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		url:'/orderManage',
 		templateUrl:'dist/tpls/orderManage.html',
 		controller:'orderManage'
-	})
-	.state('user',{
-		url:'/user',
-		templateUrl:'dist/tpls/user.html',
-		controller:'user'
 	})
 	.state('checkOrder',{
 		url:'/checkOrder',

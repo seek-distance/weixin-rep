@@ -317,7 +317,7 @@ embed {
 	height: 100%;
 	top: 0;
 	left: 0;
-	background: rgba(201, 201, 201, 0.5);
+	background: rgba(201, 201, 201, 0.8);
 	display: none;
 }
 .message .content{
@@ -331,8 +331,8 @@ embed {
 	font-size: 25px;
 	margin-bottom: 10px;
 }
-.message .btn{
-	display: block;
+.message .content>div{
+	text-align: center;
 	margin: 0 auto;
 }
 
@@ -364,4 +364,13 @@ embed {
 	text-align: center;
 	font-size: 0.3rem;
 }
-
+.load{
+    position: fixed;
+    left: 0;
+    top: 0px;
+    z-index: 99;
+    height: 100%;
+    width: 100%;
+    display: none;
+    background: rgba(255, 255, 255, 0.5) url('../images/load.gif') no-repeat center center;
+}

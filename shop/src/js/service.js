@@ -14,11 +14,19 @@ app.factory('dailog', ['$state', function($state) {
             log.style.display='none';
             url && $state.go(url);
         },
+        showLoad:function(){
+            var load=document.querySelector('.load');
+            load.style.display='block';
+        },
+        hideLoad:function(){
+            var load=document.querySelector('.load');
+            load.style.display='none';
+        }
     }
 
 }])
 
-app.factory('weixin', ['appid', 'host','$http', function(appid, host,$http) {
+app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$http,dailog) {
     return {
         config: {
             url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
@@ -38,6 +46,7 @@ app.factory('weixin', ['appid', 'host','$http', function(appid, host,$http) {
             return null;
         },
         getUser: function(code) {
+            dailog.showLoad();
             var xhr = new XMLHttpRequest();
             xhr.open("POST", host + "/wx/code", false);
             xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -75,6 +84,7 @@ app.factory('weixin', ['appid', 'host','$http', function(appid, host,$http) {
             localStorage.setItem('MY_USER_INFO', JSON.stringify(info));
         },
         getAddr: function(openId) {
+            dailog.showLoad();
             return $http.get(host + "/ds/g/WxUser?condition[openId]="+openId);
         }
     }
@@ -119,15 +129,17 @@ app.factory('cart', [function() {
     };
 }]);
 
-app.factory('searchByName', ['$http', 'host','$filter', function($http, host,$filter) {
+app.factory('searchByName', ['$http', 'host','$filter','dailog', function($http, host,$filter,dailog) {
     return {
         search: function(option) {
+            dailog.showLoad();
             return $http.get(host + "/ds/search-price", { params: option });
         },
         rate: function(option) {
             return $http.get(host + "/ds/g/Exchange", { params: option });
         },
         concat:function(option){
+            dailog.showLoad();
             return $http({
                 method:'post',
                 data:option,
@@ -139,6 +151,10 @@ app.factory('searchByName', ['$http', 'host','$filter', function($http, host,$fi
                 for (var j = 0; j < data[i].parts.length; j++) {
                     for (var k = 0; k < data[i].parts[j].prices.length; k++) {
                         data[i].parts[j].prices[k].changePrice=$filter('changRate')(data[i].parts[j].prices[k].price,data[i].parts[j].prices[k].currency); 
+                        if (data[i].name=='ic购商城') {
+                            data[i].parts[j].prices[k].changePrice = (data[i].parts[j].prices[k].changePrice * 0.95).toFixed(2);
+
+                        }
                         if (k==0) {
                             data[i].parts[j].prices[k].selected=true;
                         }else{
@@ -148,16 +164,26 @@ app.factory('searchByName', ['$http', 'host','$filter', function($http, host,$fi
                 }
             }
             return data;
+        },
+        hasItem:function(value,hasValue){
+            for (var i = 0; i < value.length; i++) {
+                if(value[i].name.trim() == hasValue.name.trim()){
+                    return true;
+                }
+            }
+            return false;
         }
     };
 }]);
 
-app.factory('searchPdf', ['$http', 'host', function($http, host) {
+app.factory('searchPdf', ['$http', 'host','dailog', function($http, host,dailog) {
     return {
         search: function(option) {
+            dailog.showLoad();
             return $http.get(host + "/ds/search-pdf", { params: option });
         },
         concat:function(option){
+            dailog.showLoad();
             return $http({
                 method:'post',
                 data:option,
@@ -167,9 +193,10 @@ app.factory('searchPdf', ['$http', 'host', function($http, host) {
     };
 }]);
 
-app.factory('contact', ['$http', 'host', function($http, host) {
+app.factory('contact', ['$http', 'host','dailog', function($http, host,dailog) {
     return {
         submit: function(option) {
+            dailog.showLoad();
             return $http({
                 method:'post',
                 data:option,
@@ -179,9 +206,10 @@ app.factory('contact', ['$http', 'host', function($http, host) {
     };
 }]);
 
-app.factory('address_add', ['$http', 'host', function($http, host) {
+app.factory('address_add', ['$http', 'host','dailog', function($http, host,dailog) {
     return {
         submit: function(option) {
+            dailog.showLoad();
             return $http({
                 method:'post',
                 data:option,
@@ -191,9 +219,10 @@ app.factory('address_add', ['$http', 'host', function($http, host) {
     };
 }]);
 
-app.factory('checkOrder', ['$http', 'host', function($http, host) {
+app.factory('checkOrder', ['$http', 'host','dailog', function($http, host,dailog) {
     return {
         addOrder: function(option) {
+            dailog.showLoad();
             return $http({
                 method:'post',
                 data:option,
@@ -203,15 +232,18 @@ app.factory('checkOrder', ['$http', 'host', function($http, host) {
     };
 }]);
 
-app.factory('order', ['$http', 'host', function($http, host) {
+app.factory('order', ['$http', 'host','dailog', function($http, host,dailog) {
     return {
         getOrdersById: function(openId) {
+            dailog.showLoad();
             return $http.get(host + "/ds/g/Order?condition[ownerOpenId]="+openId);
         },
         getOrders:function(){
+            dailog.showLoad();
             return $http.get(host + "/ds/g/Order");
         },
         expressed:function(option){
+            dailog.showLoad();
             return $http({
                 method:'post',
                 data:option,

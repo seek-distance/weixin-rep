@@ -52,7 +52,7 @@
 											<dt class="add_time">订单日期：{{value.createdAt.slice(0,10)}} </dt>
 											<dd class="order_id">订单编号：{{value._id}}</dd>
 											<dd>
-												<div class="table-responsive">
+												<div>
 									                <table class="table">
 									                    <thead>
 									                        <tr>
@@ -128,7 +128,7 @@
 		收货信息：{{currentShop.buyer.name}}&nbsp;&nbsp;{{currentShop.buyer.phone}}
 	</p>
 	<p class="address">{{currentShop.buyer.addr}}</p>
-	<p>
-		物流信息：{{currentShop.express.name}}
+	<p ng-if="currentShop.status == 'expressed'">
+		物流信息：{{currentShop.express.name}}&nbsp;&nbsp;{{currentShop.express.id}}
 	</p>
 </div>
