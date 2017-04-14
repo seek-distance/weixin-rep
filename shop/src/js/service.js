@@ -1,43 +1,232 @@
-app.factory('swipe', [function(){
-	return function(){
-		setTimeout(function(){
-			var mySwiper = new Swiper ('.swiper-container', {
-			    loop: true,
-			    pagination : '.swiper-pagination',
-			}); 
-		},10);
-	};
+app.constant('appid', 'wx72b8722be094d273');
+app.constant('host', 'https://chip.jymao.com');
+
+app.factory('dailog', ['$state', function($state) {
+    return {
+        show:function(msg){
+            var log=document.querySelector('.message');
+            var p=document.querySelector('.message p');
+            log.style.display='block';
+            if(msg) p.innerText=msg;
+        },
+        hide:function(url){
+            var log=document.querySelector('.message');
+            log.style.display='none';
+            url && $state.go(url);
+        },
+    }
+
+}])
+
+app.factory('weixin', ['appid', 'host','$http', function(appid, host,$http) {
+    return {
+        config: {
+            url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
+        },
+        isweixin: function() {
+            var ua = window.navigator.userAgent.toLowerCase();
+            if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        getQueryString: function(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        },
+        getUser: function(code) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", host + "/wx/code", false);
+            xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var data=JSON.parse(xhr.responseText);
+                        data.cart=[];
+                        localStorage.setItem('MY_USER_INFO', JSON.stringify(data));
+                    } else {
+                        console.error(xhr.statusText);
+                    }
+                }
+            };
+            xhr.onerror = function(e) {
+                console.error(xhr.statusText);
+            };
+            xhr.send('code='+code);
+        },
+        getUserInfo: function() {
+            if (localStorage.getItem('MY_USER_INFO') != null) {
+                return JSON.parse(localStorage.getItem('MY_USER_INFO'));
+            } else {
+                if (this.getQueryString('code') != null) {
+                    this.getUser(this.getQueryString('code'));
+                    return JSON.parse(localStorage.getItem('MY_USER_INFO'));
+                } else {
+                    window.location.href = this.config.url;
+                }
+            }
+        },
+        setUserInfo:function(name,value){
+            var info=this.getUserInfo();
+            info[name]=value;
+            localStorage.setItem('MY_USER_INFO', JSON.stringify(info));
+        },
+        getAddr: function(openId) {
+            return $http.get(host + "/ds/g/WxUser?condition[openId]="+openId);
+        }
+    }
+}])
+
+app.factory('swipe', [function() {
+    return function() {
+        setTimeout(function() {
+            var mySwiper = new Swiper('.swiper-container', {
+                loop: true,
+                pagination: '.swiper-pagination',
+            });
+        }, 10);
+    };
 }]);
 
-app.factory('totalPrice', [function(){
-	return function(data){
-		var sum=0;
-		for (var i = 0; i < data.length; i++) {
-			if (data[i].selected)	sum += data[i].sellPrice * data[i].num;			
-		}
-		return sum;
-	};
+app.factory('cart', [function() {
+    return {
+        totalPrice:function(data){
+            var sum = 0;
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].selected) sum += parseFloat(data[i].singlePrice);
+            }
+            return sum;
+        },
+        totalNum:function(data){
+            var sum = 0;
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].selected) sum += data[i].num;
+            }
+            return sum;
+        },
+        findSelected:function(data){
+            var sum=[];
+            for (var i = 0; i < data.length; i++) {
+                if(data[i].selected){
+                    sum.push(data[i]);
+                }
+            }
+            return sum;
+        }      
+    };
 }]);
 
-app.constant('host', 'http://chip.jymao.com');
-app.factory('searchByName', ['$http','host', function($http,host){
-	return {
-		search:function(option){
-			return $http.get(host + "/ds/search-price",{params:option});
-		},
-		rate:function(option){
-			return $http.get(host + "/ds/g/Exchange",{params:option});
-		}
-	};
+app.factory('searchByName', ['$http', 'host','$filter', function($http, host,$filter) {
+    return {
+        search: function(option) {
+            return $http.get(host + "/ds/search-price", { params: option });
+        },
+        rate: function(option) {
+            return $http.get(host + "/ds/g/Exchange", { params: option });
+        },
+        concat:function(option){
+            return $http({
+                method:'post',
+                data:option,
+                url:host + '/wx/contact-kf'
+            })
+        },
+        changePrice:function(data){
+            for (var i = 0; i < data.length; i++) {
+                for (var j = 0; j < data[i].parts.length; j++) {
+                    for (var k = 0; k < data[i].parts[j].prices.length; k++) {
+                        data[i].parts[j].prices[k].changePrice=$filter('changRate')(data[i].parts[j].prices[k].price,data[i].parts[j].prices[k].currency); 
+                        if (k==0) {
+                            data[i].parts[j].prices[k].selected=true;
+                        }else{
+                            data[i].parts[j].prices[k].selected=false;
+                        }                 
+                    }
+                }
+            }
+            return data;
+        }
+    };
 }]);
 
-app.factory('searchPdf', ['$http','host', function($http,host){
-	return {
-		search:function(option){
-			return $http.get(host + "/ds/search-pdf",{params:option});
-		}
-	};
+app.factory('searchPdf', ['$http', 'host', function($http, host) {
+    return {
+        search: function(option) {
+            return $http.get(host + "/ds/search-pdf", { params: option });
+        },
+        concat:function(option){
+            return $http({
+                method:'post',
+                data:option,
+                url:host + '/wx/contact-kf'
+            })
+        }
+    };
 }]);
+
+app.factory('contact', ['$http', 'host', function($http, host) {
+    return {
+        submit: function(option) {
+            return $http({
+                method:'post',
+                data:option,
+                url:host + '/ds/wx-user/phone'
+            })
+        }
+    };
+}]);
+
+app.factory('address_add', ['$http', 'host', function($http, host) {
+    return {
+        submit: function(option) {
+            return $http({
+                method:'post',
+                data:option,
+                url:host + '/ds/wx-user/receive-addr'
+            })
+        }
+    };
+}]);
+
+app.factory('checkOrder', ['$http', 'host', function($http, host) {
+    return {
+        addOrder: function(option) {
+            return $http({
+                method:'post',
+                data:option,
+                url:host + '/ds/order'
+            })
+        }
+    };
+}]);
+
+app.factory('order', ['$http', 'host', function($http, host) {
+    return {
+        getOrdersById: function(openId) {
+            return $http.get(host + "/ds/g/Order?condition[ownerOpenId]="+openId);
+        },
+        getOrders:function(){
+            return $http.get(host + "/ds/g/Order");
+        },
+        expressed:function(option){
+            return $http({
+                method:'post',
+                data:option,
+                url:host + '/ds/order/expressed'
+            })
+        }
+    };
+}]);
+
+
+
+/*
+https://chip.jymao.com/#/search-by-name
+*/
+
 /*
 服务器: chip.jymao.com
 搜型号:
@@ -60,6 +249,9 @@ app.factory('searchPdf', ['$http','host', function($http,host){
             ]
 ]
 
+localStorage.setItem('MY_USER_INFO', '{"openId":"oHqoBw4UjbflLS0G3S_IceUPznwU","name":"心向远方","sex":1,"city":"","province":"","country":"","cart":[]}');
+localStorage.getItem('MY_USER_INFO')
+
 搜pdf:
 /ds/search-pdf?part=型号名
 例如: http://chip.jymao.com/ds/search-pdf?part=0-1393230-9
@@ -77,23 +269,96 @@ http://chip.jymao.com/ds/g/Exchange?condition[name]=美元
 */
 
 /*
-添加微信用户:
-POST /ds/wx-user 
-参数:
+接口:
+POST /wx/code 
 {
-  openId:*****,
-  accessToken:*****
+code:*******
 }
 
-如果此用户已经被添加过, 后台会自动刷新accessToken, 不会报错.
+返回:
+{"name":****,"sex":*,"city":***,"province":***,"country":***, openId:*****}
+*/
+
+/*
+接口: 联系客服 
+POST /wx/contact-kf
+{
+    openId:***** (用户的openId, 如果为空, 会自动取该用户最近授权时获得的openId
+}
+
+调用此接口后, 需关闭网页; 此接口会在微信聊天框里自动绑定一个在线客服
 
 */
 
+/*
+接口: 添加/更新电话号码
+POST /ds/wx-user/phone
+{
+openId:****,
+phone:****
+}
+*/
+
+/*
+接口: 添加/更新地址
+POST /ds/wx-user/receive-addr
+{
+openId:****,
+receiveAddr:{
+phone:***
+name:****,
+addr:****,
+zipCode:****
+}
+}
+*/
+
+/*
+获取微信用户信息:
+GET /ds/g/WxUser?condition[openId]=***********
+*/
+
+/*
+添加订单:
+POST /ds/order
+{
+    buyer:{
+        name:{type:"String"},
+        phone:{type:"String"},
+        addr:{type:"String"},
+        zipCode:{type:"String"}
+    },
+    subOrders:[
+        {
+            partName:{type:"String"},
+            qty:{type:"Number"},
+            price:{type:"Number"}
+        }
+    ],
+    totalPrice:{type:"Number"},
+    ownerOpenId:...
+}
+
+*/
+ /*
+设置订单的快递信息(已付款订单才可以设置)
+Post /ds/order/expressed
+{
+ownerOpenId:****,
+orderId:*****,
+express:{
+    name:****,
+    id:****
+}
+}
+获取订单
+GET /ds/g/Order?condition[ownerOpenId]=********
+ */
 
 /*
 var menu = {
      "button":[
-     {	
+     {  
           "type":"click",
           "name":"资讯",
           "key":"IC_NEWS"
@@ -101,7 +366,7 @@ var menu = {
       {
            "name":"商城",
            "sub_button":[
-           {	
+           {  
                "type":"view",
                "name":"搜型号",
                "url":"http://chip.jymao.com/search-by-name"

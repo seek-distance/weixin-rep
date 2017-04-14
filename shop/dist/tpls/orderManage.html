@@ -1,0 +1,146 @@
+<div id="Cheader" style="background: rgb(235, 236, 237);">
+    <div id="header" class="header_03">
+        <div class="all" ng-if="!current">
+            <div class="back">
+                <a onclick="javascript: window.history.go(-1);return false;" class="home">
+                    <i style="font-size: 15px;line-height: 32px;" class="fa fa-chevron-left"></i>
+                </a>
+            </div>
+            <div class="tit" style="">
+                <h3 style="line-height: 2.8;">订单管理</h3>
+            </div>
+            <div class="nav">
+                <ul>
+                    <li class="cart">
+                        <a ui-sref='cart'>购物车</a>
+                        <span id="ShoppingCartNum" style="display: none;"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="current" ng-if="current">
+            <div class="back">
+                <a ng-click="hideCurrent()" class="home">
+                    <i style="font-size: 15px;line-height: 32px;" class="fa fa-chevron-left"></i>
+                </a>
+            </div>
+            <div class="tit" style="">
+                <h3 style="line-height: 2.8;">订单详情</h3>
+            </div>
+            <div class="nav">
+                <ul>
+                    <li class="cart">
+                        <a ui-sref='cart'>购物车</a>
+                        <span id="ShoppingCartNum" style="display: none;"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="wrapper" class="xm_app">
+    <div id="viewport" class="viewport" style="display: block; background: transparent;">
+        <div class="order_list mlr20" ng-if="!current">
+            <div class="box">
+                <div class="list_order list_order_tmp list_nav">
+                    <ul id="OrderList">
+                        <li ng-repeat="(key, value) in orders" ng-click='showCurrent(key)' style="margin-bottom: 5px;">
+                            <div class="order items" style="height: auto;padding-right: 10px;">
+                                <a class="lnk">
+                                    <div class="order_info" style="padding-top: 8px">
+                                        <dl>
+                                            <dt class="add_time">订单日期：{{value.createdAt.slice(0,10)}} </dt>
+                                            <dd class="order_id">订单编号：{{value._id}}</dd>
+                                            <dd>
+                                                <div class="table-responsive">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>商品名</th>
+                                                                <th>价格</th>
+                                                                <th>数量</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="(k, val) in value.subOrders">
+                                                                <td ng-bind="val.partName"></td>
+                                                                <td ng-bind="val.price"></td>
+                                                                <td ng-bind="val.qty"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </dd>
+                                            <dd>
+                                                <span class="goods_amount">总价：¥ {{value.totalPrice}}</span>
+                                                <span class="order_type">
+													状态：
+													<span ng-if="value.status == 'not-paid'">未付款</span>
+                                                <span ng-if="value.status == 'paid'">已付款</span>
+                                                <span ng-if="value.status == 'expressed'">已发货</span>
+                                                </span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="order-detail" ng-show="current">
+            <p>订单日期：{{currentShop.createdAt.slice(0,10)}}</p>
+            <p>订单编号：{{currentShop._id}}</p>
+            <div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>商品名</th>
+                                <th>价格</th>
+                                <th>数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="(k, val) in currentShop.subOrders">
+                                <td ng-bind="val.partName"></td>
+                                <td ng-bind="val.price"></td>
+                                <td ng-bind="val.qty"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p>
+                总价：{{currentShop.totalPrice}} &nbsp;&nbsp;&nbsp;
+                <span class="order_type">
+			状态：
+			<span ng-if="currentShop.status == 'not-paid'">未付款</span>
+                <span ng-if="value.status == 'paid'">已付款</span>
+                <span ng-if="value.status == 'expressed'">已发货</span>
+                </span>
+            </p>
+            <p>
+                收货信息：{{currentShop.buyer.name}}&nbsp;&nbsp;{{currentShop.buyer.phone}}
+            </p>
+            <p class="address">{{currentShop.buyer.addr}}</p>
+            <p ng-if="currentShop.status == 'expressed'">
+                物流信息：{{currentShop.express.name}}
+            </p>
+            <form class="express" name='express' ng-show="value.status == 'paid'">
+                <input required name="name" ng-model='name' type="text" placeholder="物流公司">
+                <input required name="id" ng-model='id' type="text" placeholder="物流单号">
+                <button ng-disabled="express.$invalid" ng-click='write()' class="btn btn-info">确定</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="message">
+    <div class="content">
+        <p class="text-success text-center">更新成功</p>
+        <div>
+            <button ng-click="closeFix()" class="btn btn-success">确定</button>
+        </div>
+    </div>
+</div>

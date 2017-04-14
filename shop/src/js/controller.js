@@ -1,105 +1,260 @@
-app.controller('index', ['$scope', function($scope){
-	
+app.controller('index', ['$scope','$location','appid','weixin', function($scope,$location,appid,weixin){
+	/*if(!weixin.isweixin()){
+		location.url='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+	}*/
+	console.log(weixin.getUserInfo());
 }]);
 
 app.controller('home', ['$scope', function($scope){
 	
 }]);
 
-app.controller('cart', ['$scope','autoRem','totalPrice', function($scope,autoRem,totalPrice){
-	//autoRem();
-	$scope.shops=[
-		{
-			selected:true,
-			imgSrc:'//i1.mifile.cn/a1/pms_1488358225.13157868!180x180.jpg',
-			name:'红米4X 全网通版 2GB内存 香槟金 16GB',
-			sellPrice:699,
-			num:1,
-		},
-		{
-			selected:false,
-			imgSrc:'//i1.mifile.cn/a1/pms_1488358225.13157868!180x180.jpg',
-			name:'红米4X 全网通版 2GB内存 香槟金 16GB',
-			sellPrice:699,
-			num:1,
-		},
-	];
-	$scope.totalPrice = totalPrice($scope.shops);
+app.controller('cart', ['$scope','cart','weixin','$rootScope','$state', function($scope,cart,weixin,$rootScope,$state){
+	$scope.shops=weixin.getUserInfo().cart;
+	$scope.reload=function(){
+		$scope.totalPrice = cart.totalPrice($scope.shops);
+		$scope.totalNum=cart.totalNum($scope.shops);
+		weixin.setUserInfo('cart',$scope.shops);
+	}
+	$scope.reload();
+
 
 	$scope.addNum=function(i){
 		$scope.shops[i].num++;
-		$scope.totalPrice = totalPrice($scope.shops);
+		$scope.changeNum(i);
 	};
 	$scope.subNum=function(i){
 		$scope.shops[i].num--;
 		if ($scope.shops[i].num<1) $scope.shops[i].num = 1;
-		$scope.totalPrice = totalPrice($scope.shops);
+		$scope.changeNum(i);
 	};
 	$scope.changeSelect=function(i){
 		$scope.shops[i].selected = !$scope.shops[i].selected;
-		$scope.totalPrice = totalPrice($scope.shops);
+		$scope.reload();
 	};
 	$scope.deleteShop = function(i){
 		$scope.shops.splice(i,1);
-		$scope.totalPrice = totalPrice($scope.shops);
+		$scope.reload();
 	};
+	$scope.changeNum=function(index){		
+		for (var j = 0; j < $scope.shops[index].prices.length; j++) {
+			$scope.shops[index].prices[j].selected=false;
+		}
+		for (var j = 0; j < $scope.shops[index].prices.length; j++) {
+			if(parseInt($scope.shops[index].prices[j].amount)<=parseInt($scope.shops[index].num) 
+				&& $scope.shops[index].prices[j+1] 
+				&& parseInt($scope.shops[index].prices[j+1].amount)>parseInt($scope.shops[index].num)
+			){
+				$scope.shops[index].prices[j].selected=true;
+				$scope.shops[index].singlePrice=$scope.shops[index].prices[j].changePrice * $scope.shops[index].num;
+				$scope.shops[index].singlePrice=$scope.shops[index].singlePrice.toFixed(2);
+				$scope.reload();
+				return;
+			}
+			if ($scope.shops[index].prices.length-1 == j && parseInt($scope.shops[index].num)<$scope.shops[index].prices[0].amount) {
+				$scope.shops[index].prices[0].selected=true;
+				$scope.shops[index].singlePrice=$scope.shops[index].prices[j].changePrice * $scope.shops[index].num;
+				$scope.shops[index].singlePrice=$scope.shops[index].singlePrice.toFixed(2);	
+				$scope.reload();		
+				return;
+			}
+			if ($scope.shops[index].prices.length-1 == j) {
+				$scope.shops[index].prices[j].selected=true;
+				$scope.shops[index].singlePrice=$scope.shops[index].prices[j].changePrice * $scope.shops[index].num;
+				$scope.shops[index].singlePrice=$scope.shops[index].singlePrice.toFixed(2);
+				$scope.reload();
+			}			
+		}
+	}
+	$scope.checkOrder = function(){
+		$rootScope.selectShop=cart.findSelected($scope.shops);
+		$state.go('checkOrder');
+	}
+
 }]);
 
-app.controller('order', ['$scope', function($scope){
-	
+app.controller('order', ['$scope','order','weixin','$state', function($scope,order,weixin,$state){
+	order.getOrdersById(weixin.getUserInfo().openId).then(function(obj){
+		$scope.orders=obj.data;		
+	})
+	$scope.current=false;
+	$scope.showCurrent=function(key){
+		$scope.currentShop = $scope.orders[key];
+		$scope.current=true;
+	};
+	$scope.hideCurrent=function(){
+		setTimeout(function(){
+			$scope.current=false;
+			$scope.$apply();
+		},300)		
+	}
+	$scope.goback=function(){
+		$state.go(-1);
+	}
+}]);
+
+app.controller('orderManage', ['$scope','order','weixin','$state','dailog', function($scope,order,weixin,$state,dailog){
+	order.getOrders().then(function(obj){
+		$scope.orders=obj.data;	
+	})
+	$scope.current=false;
+	$scope.name='';
+	$scope.id='';
+	$scope.showCurrent=function(key){
+		$scope.currentShop = $scope.orders[key];
+		$scope.current=true;
+	};
+	$scope.hideCurrent=function(){
+		setTimeout(function(){
+			$scope.current=false;
+			$scope.$apply();
+		},300)		
+	}
+	$scope.goback=function(){
+		$state.go(-1);
+	}
+	$scope.write=function(){
+		order.expressed({
+			ownerOpenId:$scope.current.ownerOpenId,
+			orderId:weixin.getUserInfo().openId,
+			express:{
+			    name:$scope.name,
+			    id:$scope.id
+			}
+		}).then(function(obj){
+			var data=obj.data;
+			if (data.msg=='ok') {
+				dailog.show();
+			}
+		})
+	}
+	$scope.closeFix=function(){
+		$state.go('orderManage');
+	}
 }]);
 
 app.controller('user', ['$scope','$rootScope', function($scope,$rootScope){
 	$rootScope.isLogin=true;
 }]);
 
-app.controller('order_info', ['$scope', function($scope){
-	
+app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder', function($scope,$rootScope,weixin,dailog,checkOrder){
+	$scope.shopPrice=function(){
+		var sum=0;
+		for (var i = 0; i < $scope.shops.length; i++) {
+			sum += parseFloat($scope.shops[i].singlePrice);
+		}
+		return sum;
+	}
+	$scope.num=function(){
+		var sum=0;
+		for (var i = 0; i < $scope.shops.length; i++) {
+			sum += parseInt($scope.shops[i].num);
+		}
+		return sum;
+	}
+	$scope.closeFix=function(){
+		dailog.hide('order');
+	}
+	$scope.pay=function(){
+		checkOrder.addOrder({
+		    buyer:{
+		        name:$scope.address.name,
+		        phone:$scope.address.phone,
+		        addr:$scope.address.addr,
+		        zipCode:$scope.address.zipCode
+		    },
+		    subOrders:subOrders,
+		    totalPrice:$scope.shopTotalPrice,
+		    ownerOpenId:weixin.getUserInfo().openId
+		}).then(function(obj){
+			if (obj.data.msg=='ok') {
+				dailog.show();
+			}
+		})
+	}
+
+
+	if ($rootScope.currentAddr) {
+		$scope.address = $rootScope.currentAddr;
+	}else{
+		weixin.getAddr(weixin.getUserInfo().openId).then(function(obj){
+			$rootScope.AllAddr = obj.data[0].receiveAddrs;
+			$scope.address = $rootScope.AllAddr[0];
+		})
+	}
+	console.log($rootScope.selectShop);
+	$scope.shops=$rootScope.selectShop;
+
+	var subOrders = [];
+	for (var i = 0; i < $rootScope.selectShop.length; i++) {
+		subOrders[i]={};
+		subOrders[i].partName=$rootScope.selectShop[i].shopName;
+		subOrders[i].qty=$rootScope.selectShop[i].num;
+		for (var j = 0; j < $rootScope.selectShop[i].prices.length; j++) {
+			if($rootScope.selectShop[i].prices[j].selected){
+				subOrders[i].price = $rootScope.selectShop[i].prices[j].changePrice;
+				break;
+			}
+		}	
+	}
+
+	$scope.shopTotalPrice=$scope.shopPrice();
+	$scope.totalNum=$scope.num();
+
 }]);
 
-app.controller('search', ['$scope', function($scope){
-	
+app.controller('address', ['$scope','weixin','$rootScope','$state', function($scope,weixin,$rootScope,$state){
+	var openId=weixin.getUserInfo().openId;
+
+	weixin.getAddr(openId).then(function(obj){
+		$scope.address=obj.data[0].receiveAddrs;
+		$rootScope.AllAddr = $scope.address;
+	})
+
+	$scope.changeAddress=function(index){
+		$rootScope.currentAddr=$scope.address[index];
+		setTimeout(function(){
+			$state.go('checkOrder');
+		},300)
+		
+	}
 }]);
 
-app.controller('category', ['$scope', function($scope){
-	
+app.controller('address_add', ['$scope','address_add','weixin','dailog', function($scope,addressAdd,weixin,dailog){
+	//$scope.provinceList=['请选择省','北京','天津'];
+	$scope.tel='';
+	$scope.name='';
+	$scope.address='';
+	$scope.zipCode='';
+
+	$scope.closeFix=function(){
+		dailog.hide('address');
+	}
+	$scope.submit=function(){
+		addressAdd.submit({
+			openId:weixin.getUserInfo().openId,
+			receiveAddr:{
+				phone:$scope.tel,
+				name:$scope.name,
+				addr:$scope.address,
+				zipCode:$scope.zipCode
+			}
+		}).then(function(obj){
+			var data=obj.data;
+			if (data.msg == 'ok') {
+				dailog.show('新增成功');
+			}
+		})
+	}
 }]);
 
-app.controller('good', ['$scope','swipe', function($scope,swipe){
-	$scope.imgs=['dist/images/order1.jpg','dist/images/order2.jpg'];
-	swipe();
-	
-}]);
-
-app.controller('login', ['$scope', function($scope){
-	
-}]);
-
-app.controller('list', ['$scope', function($scope){
-	
-}]);
-
-app.controller('checkOrder', ['$scope', function($scope){
-	
-}]);
-
-app.controller('address', ['$scope', function($scope){
-	
-}]);
-
-app.controller('address_add', ['$scope', function($scope){
-	$scope.provinceList=['请选择省','北京','天津'];
-	console.log($scope.province);
-}]);
-
-app.controller('searchByName', ['$scope','searchByName','$rootScope', function($scope,searchByName,$rootScope){
+app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin', function($scope,searchByName,$rootScope,weixin){
 	$scope.showList=false;
 	$scope.noList=false;
 
 	searchByName.rate().success(function(data){
 		$rootScope.rate=data;
 		$rootScope.rate.push({name:'RMB',rate:100})
-		console.log(data);
 	});
 
 	$scope.submit=function(){
@@ -114,14 +269,49 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope', function($
 			}else{
 				$scope.noList=false;
 				$scope.showList = true;
-				$scope.list=data.distributors;
 				if (data.distributors.length<3) {
 					var num = 3 - data.distributors.length;
-					Array.prototype.push.apply($scope.list,data.icKeys.slice(0,num));
+					Array.prototype.push.apply(data.distributors,data.icKeys.slice(0,num));
 				}
-			}			
+				$scope.list=searchByName.changePrice(data.distributors);
+			}
+			console.log($scope.list);		
 		});
 	};
+
+	$scope.concat=function(){
+		var openId=weixin.getUserInfo().openId;
+		searchByName.concat({openId:openId});
+		location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+		
+	}
+
+	$scope.addToCart=function(firstKey,secondKey){	
+		var data = $scope.list[firstKey].parts[secondKey];
+		data.name=$scope.list[firstKey].name;
+		data.shopName=$scope.searchName;
+		data.singlePrice=data.prices[0].changePrice;
+		data.selected=false;
+		var cart=weixin.getUserInfo().cart;
+
+		var hasShop=$scope.hasShop(data.maker,data.name);
+		if (hasShop.msg) {
+			cart[hasShop.index].num++;		
+		}else{
+			data.num=1;
+			cart.push(data);
+		}
+		weixin.setUserInfo('cart',cart);
+	}
+
+	$scope.hasShop=function(maker,name){
+		for (var i = 0; i < weixin.getUserInfo().cart.length; i++) {
+			if(weixin.getUserInfo().cart[i].maker == maker && weixin.getUserInfo().cart[i].name == name){
+				return {msg:true,index:i};
+			}
+		}
+		return {msg:false};
+	}
 
 }]);
 
@@ -142,7 +332,25 @@ app.controller('searchByPdf', ['$scope','searchPdf', function($scope,searchPdf){
 			}
 		});
 	};
-	
 }]);
+
+app.controller('contact', ['$scope','contact','weixin', function($scope,contact,weixin){
+	$scope.success=false;
+	$scope.submit=function(){
+		contact.submit({
+			openId:weixin.getUserInfo().openId,
+			phone:$scope.tel
+		}).then(function(obj){
+			if (obj.data.msg == 'ok') {
+				$scope.success=true;
+			}else{
+				$scope.success=false;
+			}
+		},function(){
+			$scope.success=false;
+		})
+	}
+}]);
+
 
 

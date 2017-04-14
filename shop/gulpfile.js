@@ -45,7 +45,7 @@ gulp.task('concat-css',function(){
 	.pipe(gulp.dest('dist/css'))
 	.pipe(minifyCss())			//压缩
 	.pipe(rename('all.min.css'))	//重命名
-	.pipe(gulp.dest('dist/css'));
+	.pipe(gulp.dest('dist/tpls'));
 });
 
 //静态资源css自动添加前缀，整合，压缩 
@@ -67,7 +67,7 @@ gulp.task('concat-js',function(){
 	gulp.src('src/js/*.js')
 	.pipe(plumber())
 	.pipe(concat('all.js'))		//合并js并命名为all.js
-	.pipe(gulp.dest('dist/js'))
+	.pipe(gulp.dest('dist/tpls'))
 	
 	.pipe(uglify())		//压缩
 	.pipe(rename('all.min.js'))		//重命名
@@ -87,9 +87,9 @@ gulp.task('jsHint',function(){
 gulp.task('watch',function(){
 	gulp.watch('src/js/*.js',['concat-js','jsHint']);
 	gulp.watch('src/scss/*',['changeToCss']);
-	gulp.watch('src/css/*',['concat-css']);
+	gulp.watch('src/css/*.css',['concat-css']);
 	gulp.watch('src/css/static/*.css',['concat-staticCSS']);
 	gulp.watch('dist/*/*',['reload']);
 });
 
-gulp.task('default',['webserver','changeToCss','concat-css','concat-staticCSS','concat-js','jsHint','watch']);
+gulp.task('default',['webserver','changeToCss','concat-staticCSS','concat-js','jsHint','watch']);

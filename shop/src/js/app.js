@@ -73,49 +73,24 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		controller:'home'
 	})
 	.state('cart',{
-		url:'/cart',
+		url:'/my-shopping-cart',
 		templateUrl:'dist/tpls/cart.html',
 		controller:'cart'
 	})
 	.state('order',{
-		url:'/order',
+		url:'/my-orders',
 		templateUrl:'dist/tpls/order.html',
 		controller:'order'
+	})
+	.state('orderManage',{
+		url:'/orderManage',
+		templateUrl:'dist/tpls/orderManage.html',
+		controller:'orderManage'
 	})
 	.state('user',{
 		url:'/user',
 		templateUrl:'dist/tpls/user.html',
 		controller:'user'
-	})
-	.state('order_info',{
-		url:'/order_info',
-		templateUrl:'dist/tpls/order_info.html',
-		controller:'user'
-	})
-	.state('search',{
-		url:'/search',
-		templateUrl:'dist/tpls/search.html',
-		controller:'search'
-	})
-	.state('category',{
-		url:'/category',
-		templateUrl:'dist/tpls/category.html',
-		controller:'category'
-	})
-	.state('good',{
-		url:'/good',
-		templateUrl:'dist/tpls/good.html',
-		controller:'good'
-	})
-	.state('login',{
-		url:'/login',
-		templateUrl:'dist/tpls/login.html',
-		controller:'login'
-	})
-	.state('list',{
-		url:'/list',
-		templateUrl:'dist/tpls/list.html',
-		controller:'list'
 	})
 	.state('checkOrder',{
 		url:'/checkOrder',
@@ -138,9 +113,14 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		controller:'searchByName'
 	})
 	.state('searchByPdf',{
-		url:'/search-by-pdf',
+		url:'/search-pdf',
 		templateUrl:'dist/tpls/search-pdf.html',
 		controller:'searchByPdf'
+	})
+	.state('contact',{
+		url:'/my-contact',
+		templateUrl:'dist/tpls/contact.html',
+		controller:'contact'
 	})
 }]);
 

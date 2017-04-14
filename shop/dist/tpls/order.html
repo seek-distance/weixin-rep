@@ -1,76 +1,89 @@
 <div id="Cheader" style="background: rgb(235, 236, 237);">
 	<div id="header" class="header_03">
-		<div class="back">
-			<a class="arrow">首页</a>
+		<div class="all" ng-if="!current">
+			<div class="back">
+				<a onclick="javascript: window.history.go(-1);return false;" class="home">
+	                <i style="font-size: 15px;line-height: 32px;" class="fa fa-chevron-left"></i>
+	            </a>
+			</div>
+			<div class="tit" style="">
+				<h3 style="line-height: 2.8;">全部订单</h3>
+			</div>
+			<div class="nav">
+				<ul>
+					<li class="cart">
+						<a ui-sref='cart'>购物车</a>
+						<span id="ShoppingCartNum" style="display: none;"></span>
+					</li>
+				</ul>
+			</div>
 		</div>
-		<div class="tit" style="">
-			<h3 style="line-height: 2.8;">全部订单</h3>
-		</div>
-		<div class="nav">
-			<ul>
-				<li class="cart">
-					<a>购物车</a>
-					<span id="ShoppingCartNum" style="display: none;"></span>
-				</li>
-			</ul>
-		</div>
+		<div class="current" ng-if="current">
+			<div class="back">
+				<a ng-touch="hideCurrent()" class="home">
+	                <i style="font-size: 15px;line-height: 32px;" class="fa fa-chevron-left"></i>
+	            </a>
+			</div>
+			<div class="tit" style="">
+				<h3 style="line-height: 2.8;">订单详情</h3>
+			</div>
+			<div class="nav">
+				<ul>
+					<li class="cart">
+						<a ui-sref='cart'>购物车</a>
+						<span id="ShoppingCartNum" style="display: none;"></span>
+					</li>
+				</ul>
+			</div>
+		</div>		
 	</div>
 </div>
-<div id="wrapper" class="xm_app">
+<div id="wrapper" class="xm_app" ng-if="!current">
 	<div id="viewport" class="viewport" style="display: block; background: transparent;">
-		<div id="crumbs" class="crumbs" style="display: none;">
-			<ul>
-				<li>
-					<a ui-sref="home"><span>首页</span></a>
-				</li>
-				<li>
-					<a>我的帐户</a>
-				</li>
-				<li>
-					<a href="javascript:;">订单查询</a>
-				</li>
-			</ul>
-		</div>
 		<div class="order_list mlr20">
-			<p class="gc mb20">
-				<img style="width:22px;height:22px" src="dist/images/sign_icon.png" alt=""> 
-				酒查查公司不会以任何理由要求您提供银行卡信息或支付额外费用，请谨防钓鱼链接或诈骗电话
-			</p>
 			<div class="box">
 				<div class="list_order list_order_tmp list_nav">
 					<ul id="OrderList">
-						<li>
-							<div class="order items">
-								<a href="order_info.html" class="lnk">
-									<div class="imgurl">
-										<img src="dist/images/order1.jpg">
-									</div>
-									<div class="order_info">
-										<dl> <dt class="add_time">订单日期：2015/05/20 </dt>
-											<dd class="order_id">订单编号：1150520620043248</dd>
+						<li ng-repeat="(key, value) in orders" ng-touch='showCurrent(key)' style="margin-bottom: 5px;">
+							<div class="order items" style="height: auto;padding-right: 10px;">
+								<a class="lnk">
+									<div class="order_info" style="padding-top: 8px">
+										<dl> 
+											<dt class="add_time">订单日期：{{value.createdAt.slice(0,10)}} </dt>
+											<dd class="order_id">订单编号：{{value._id}}</dd>
+											<dd>
+												<div class="table-responsive">
+									                <table class="table">
+									                    <thead>
+									                        <tr>
+									                            <th>商品名</th>
+									                            <th>价格</th>
+									                            <th>数量</th>
+									                        </tr>
+									                    </thead>
+									                    <tbody>
+									                        <tr ng-repeat="(k, val) in value.subOrders">
+									                            <td ng-bind="val.partName"></td>
+									                            <td ng-bind="val.price"></td>
+									                            <td ng-bind="val.qty"></td>
+									                        </tr>
+									                    </tbody>
+									                </table>
+									            </div>
+											</dd>
 											<dd> 
-												<span class="goods_amount">总价：¥ 99.90</span>
-												<span class="order_type">状态：已收货</span> 
+												<span class="goods_amount">总价：¥ {{value.totalPrice}}</span>
+												<span class="order_type">
+													状态：
+													<span ng-if="value.status == 'not-paid'">未付款</span>
+													<span ng-if="value.status == 'paid'">已付款</span>
+													<span ng-if="value.status == 'expressed'">已发货</span>
+												</span> 
 											</dd>
 										</dl>
 									</div>
 								</a>
 							</div>
-							<div class="btns" style="display:none"> </div>
-						</li>
-						<li>
-							<div class="order items">
-								<a href="order_info.html" class="lnk">
-									<div class="imgurl"><img src="dist/images/order2.jpg"></div>
-									<div class="order_info">
-										<dl> <dt class="add_time">订单日期：2014/12/23 </dt>
-											<dd class="order_id">订单编号：1141223360019387</dd>
-											<dd> <span class="goods_amount">总价：¥ 59.00</span><span class="order_type">状态：已收货</span> </dd>
-										</dl>
-									</div>
-								</a>
-							</div>
-							<div class="btns" style="display:none"> </div>
 						</li>
 					</ul>
 				</div>
@@ -79,23 +92,43 @@
 		</div>
 	</div>
 </div>
-<div id="maskLoad" class="maskLoad" style="display:none;"><span>正在加载...</span></div>
-<div id="mask" class="mask hide"></div>
-<div class="pop_panel hide" id="pop_panel">
-	<div class="content">
-		<div class="bd giftCard_view">
-			<div class="gfc5">
-				<div class="b b1">
-					<p>提示</p>
-				</div>
-				<div class="b b2">
-					<p id="content"></p>
-				</div>
-			</div>
-		</div>
+<div class="order-detail" ng-if="current">
+	<p>订单日期：{{currentShop.createdAt.slice(0,10)}}</p>
+	<p>订单编号：{{currentShop._id}}</p>
+	<div>
+		<div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <th>价格</th>
+                        <th>数量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(k, val) in currentShop.subOrders">
+                        <td ng-bind="val.partName"></td>
+                        <td ng-bind="val.price"></td>
+                        <td ng-bind="val.qty"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 	</div>
-	<a id="CloseMaskBtn" class="close"></a>
-</div>
-<div id="popup" style="display:none">
-	<p></p>
+	<p>
+		总价：{{currentShop.totalPrice}} &nbsp;&nbsp;&nbsp;
+		<span class="order_type">
+			状态：
+			<span ng-if="currentShop.status == 'not-paid'">未付款</span>
+			<span ng-if="value.status == 'paid'">已付款</span>
+			<span ng-if="value.status == 'expressed'">已发货</span>
+		</span> 
+	</p>
+	<p>
+		收货信息：{{currentShop.buyer.name}}&nbsp;&nbsp;{{currentShop.buyer.phone}}
+	</p>
+	<p class="address">{{currentShop.buyer.addr}}</p>
+	<p>
+		物流信息：{{currentShop.express.name}}
+	</p>
 </div>

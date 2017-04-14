@@ -240,6 +240,10 @@ body,
     margin-bottom: .12rem
 }
 
+.cart-index-wrap .price tr.on{
+    background: #ffd;
+}
+
 .cart-index-wrap .item .attr {
     margin-bottom: .12rem
 }
@@ -376,6 +380,7 @@ body,
 }
 
 .cart-index-wrap .bottom-submit {
+    height: 56px;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -389,7 +394,7 @@ body,
     color: #999;
     -webkit-box-flex: 1;
     box-flex: 1;
-    text-align: center
+    text-align: center;
 }
 
 .cart-index-wrap .bottom-submit .price strong {
@@ -399,6 +404,7 @@ body,
 }
 
 .cart-index-wrap .bottom-submit .btn {
+    padding: 0;
     -webkit-box-flex: 1;
     box-flex: 1;
 }
@@ -440,12 +446,16 @@ body,
 }
 .xm-input-number .input-num{
 	width: .6rem;
+    overflow: hidden;
     height: .6rem;
     text-align: center;
     line-height: .6rem;
 }
 .xm-input-number>div{
 	float: left;
+}
+.xm-input-number .input-num>input{
+    border: none;
 }
 
 /* 重写 */
@@ -459,7 +469,8 @@ body,
 	width: 20%
 }
 .cart-index-wrap .item .info{
-	width: 65%
+    padding-left: 5%;
+	width: 80%
 }
 .cart-index-wrap .bottom-submit>div{
 	width: 33.33%;

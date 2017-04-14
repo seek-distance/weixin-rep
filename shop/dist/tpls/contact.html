@@ -1,0 +1,8 @@
+<div id="contact">
+	<form name='telform' class="telform">
+		<input type="text" name='tel' ng-model='tel' placeholder="请输入手机号码" ng-pattern='/^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9])[0-9]{8}$/' required ng-class="{'error':telform.tel.$invalid && telform.tel.$touched}">
+		<button class="btn btn-success" ng-click="submit()" ng-disabled="telform.$invalid">提交</button>
+		<p class="text-success"><span ng-show='success'>提交成功</span></p>
+	</form>
+	
+</div>

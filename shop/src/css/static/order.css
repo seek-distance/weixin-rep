@@ -367,7 +367,7 @@ body {
 }
 
 .list_order_tmp .items {
-    height: 7.8em;
+    padding-right: 10px;
     position: relative;
     padding: 0;
     padding-right: 1em;
@@ -462,7 +462,7 @@ body {
     -moz-background-size: cover;
     -o-background-size: cover;
     -webkit-background-size: cover;
-    background-size: cover
+    background-size: cover;
 }
 
 .list_order_tmp .info {
@@ -560,8 +560,11 @@ body {
 .list_order .order_info .order_type {
     margin-right: .5em
 }
-
-.list_address li .items {
+.list_address li .items{
+    padding-top: 0;
+    padding-bottom: 0
+}
+.list_address li .items a{
     padding-top: 1.9em;
     padding-bottom: 1.9em
 }

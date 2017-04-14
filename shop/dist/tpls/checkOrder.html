@@ -2,7 +2,7 @@
     <div class="page-order-checkout" data-log="用户结算">
         <div class="header">
             <div class="left">
-                <a class="home">
+                <a ng-touch="goback()" class="home">
                     <i style="font-size: 15px;line-height: 32px;" class="fa fa-chevron-left"></i>
                 </a>
             </div>
@@ -11,19 +11,22 @@
             </div>
         </div>
         <div class="page-order-checkout-wrap">
-            <div class="b1 item-fold">
-                <a href="javascript:;">
+            <div class="b1 item-fold" ng-if="address">
+                <a ui-sref="address">
                     <div class="b11">
-                        <p><span>小明</span><span>132****2854</span></p>
+                        <p><span ng-bind="address.name"></span><span ng-bind="address.phone"></span></p>
                     </div>
                     <div class="b13">
-                        <p>广东 广州市 天河区 </p>
+                        <p ng-bind="address.addr"></p>
                     </div>
                 </a>
                 <i class="fa fa-chevron-right" aria-hidden="true" style="position: absolute;right: 14px;top:32px"></i>
             </div>
+            <div class="b1 item-fold" ng-if="!address">
+                <a ui-sref="address_add">马上添加地址</a>
+            </div>
             <div class="ui_line"></div>
-            <div class="b3">
+            <!-- <div class="b3">
                 <dl>
                     <dt class="item-fold"><span>不限送货时间</span>
                         <strong>快递配送（免运费）</strong>
@@ -48,7 +51,7 @@
                         </div>
                     </dd>
                 </dl>
-            </div>
+            </div> -->
             <!-- <div class="b3">
                 <dl>
                     <dt class="item-fold"><span></span><strong>电子发票</strong>
@@ -88,56 +91,44 @@
             </div> -->
             <div class="ui_line"></div>
             <div class="b8">
-                <div class="b8w">
-                    <div class="b81">
-                        <div class="img"><img src="//i1.mifile.cn/a1/pms_1487928964.47473084.jpg?width=80&height=80"></div>
-                    </div>
+                <div class="b8w" ng-repeat="(key, value) in shops">
                     <div class="b82">
                         <div class="name">
-                            <p><span>小米笔记本Air13.3英寸尊享版 银色</span></p>
+                            <p><span ng-bind='value.shopName'></span>X{{value.num}}</p>
                         </div>
                     </div>
                     <div class="b83">
-                        <div class="price"><strong>5999.00</strong></div>
-                    </div>
-                </div>
-                <div class="b8w">
-                    <div class="b81">
-                        <div class="img">
-                            <img src="//i1.mifile.cn/a1/pms_1487928964.47473084.jpg?width=80&height=80">
-                        </div>
-                    </div>
-                    <div class="b82">
-                        <div class="name">
-                            <p>
-                                <span>小米手机5 全网通高配版 白色 64GB</span></p>
-                        </div>
-                    </div>
-                    <div class="b83">
-                        <div class="price">
-                            <strong>1799.00</strong></div>
+                        <div ng-if="val.selected" class="price" ng-repeat="(k, val) in value.prices"><strong>{{val.price.toFixed(2)}}</strong></div>
                     </div>
                 </div>
             </div>
             <div class="ui_line"></div>
-            <div class="b5">
+            <!-- <div class="b5">
                 <div class="b51">
-                    <p><strong>商品价格：</strong><span>7798.00</span></p>
+                    <p><strong>商品价格：</strong><span>{{shopTotalPrice}}</span></p>
                 </div>
                 <div class="b53">
                     <p><strong>配送费用：</strong><span>0.00</span></p>
                 </div>
-            </div>
+            </div> -->
             <div class="b7">
                 <div class="info-tips">
-                    <p>配送至：广东 广州市 天河区 </p>
+                    <p>配送至：<span ng-bind="address.addr"></span></p>
                 </div>
                 <div class="ui-box">
-                    <div class="b71 ui-box-flex"><span>共2件 合计: </span><strong>7798.00</strong></div>
-                    <div class="b72 ui-box-flex"><a href="javascript:;" class="ui-button"><span>去付款</span></a>
+                    <div class="b71 ui-box-flex"><span>共<span ng-bind="totalNum"></span>件 合计: </span><strong ng-bind="shopTotalPrice"></strong></div>
+                    <div class="b72 ui-box-flex"><a ng-touch='pay()' class="ui-button"><span>去付款</span></a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div class="message">
+    <div class="content">
+        <p class="text-success text-center">下单成功</p>
+        <div>
+            <button ng-touch="closeFix()" class="btn btn-success">确定</button>
+        </div>
+    </div>      
 </div>
