@@ -267,7 +267,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 		if (!$scope.searchName) {
 			return;
 		}
-		searchByName.search({part:$scope.searchName}).success(function(data){
+		searchByName.search({part:encodeURIComponent($scope.searchName)}).success(function(data){
 			dailog.hideLoad();
 			if (!data.distributors || data.distributors.length == 0 && data.icKeys.length == 0) {
 				$scope.showList = false;
@@ -344,16 +344,16 @@ app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,se
 		if (!$scope.searchPdf) {
 			return;
 		}
-		searchPdf.search({part:$scope.searchPdf}).success(function(data){
+		searchPdf.search({part:encodeURIComponent($scope.searchPdf)}).success(function(data){
 			dailog.hideLoad();
-			if (!data  || data.pdfs.length == 0) {
+			if (!data  || data.pdfs2.length == 0) {
 				$scope.showList = false;
 				$scope.noList=true;
 				return;
 			}else{
 				$scope.noList=false;
 				$scope.showList = true;
-				$scope.list=data.pdfs;
+				$scope.list=data.pdfs2;
 			}
 		});
 	};

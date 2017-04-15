@@ -10,14 +10,16 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>作者</th>
+                            <th>生产商</th>
+                            <th>语言</th>
                             <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="(k, val) in list">
                             <td>{{val.maker}}</td>
-                            <td>
+                            <td>{{val.language}}</td>
+                            <td style="min-width: 70px">
                                 <a href="{{val.link}}" target="_blank" class="download">下载</a>
                             </td>
                         </tr>

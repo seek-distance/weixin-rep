@@ -17,12 +17,23 @@ angular.module("ngTouch", [])
 .directive("ngTouch", function () {
     return {
         controller: ["$scope", "$element", function ($scope, $element) {
-
-            $element.bind("touchend", onTouchStart);
-            function onTouchStart(event) {
-                var method = $element.attr("ng-touch");
-                $scope.$apply(method);
-            }
+        	var startX,startY,endX,endY;
+        	$element.bind("touchstart",function(event){
+        		startX=event.touches[0].pageX;
+        		startY=event.touches[0].pageY;
+        	})
+        	$element.bind("touchmove",function(event){
+        		endX=event.touches[0].pageX;
+        		endY=event.touches[0].pageY;
+        	})
+            $element.bind("touchend", function(event){
+            	endX = endX || startX;
+            	endY = endY || startY;
+        		if (Math.abs(startX-endX)<5 && Math.abs(startY-endY)<5) {
+        			var method = $element.attr("ng-touch");
+                	$scope.$apply(method);
+        		}
+            });
 
         }]
     };
@@ -389,7 +400,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 		if (!$scope.searchName) {
 			return;
 		}
-		searchByName.search({part:$scope.searchName}).success(function(data){
+		searchByName.search({part:encodeURIComponent($scope.searchName)}).success(function(data){
 			dailog.hideLoad();
 			if (!data.distributors || data.distributors.length == 0 && data.icKeys.length == 0) {
 				$scope.showList = false;
@@ -466,16 +477,16 @@ app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,se
 		if (!$scope.searchPdf) {
 			return;
 		}
-		searchPdf.search({part:$scope.searchPdf}).success(function(data){
+		searchPdf.search({part:encodeURIComponent($scope.searchPdf)}).success(function(data){
 			dailog.hideLoad();
-			if (!data  || data.pdfs.length == 0) {
+			if (!data  || data.pdfs2.length == 0) {
 				$scope.showList = false;
 				$scope.noList=true;
 				return;
 			}else{
 				$scope.noList=false;
 				$scope.showList = true;
-				$scope.list=data.pdfs;
+				$scope.list=data.pdfs2;
 			}
 		});
 	};
