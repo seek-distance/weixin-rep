@@ -3,7 +3,10 @@
 		<input placeholder="搜pdf" ng-change="noList=false" class="search pull-left" ng-model='searchPdf' type="text">
 		<button ng-click="submit()" class="submit pull-left">搜索</button>
 	</form>
-	<p class="error text-error" ng-if='noList'>没有找到对应内容</p>
+    <div class="error text-error" ng-if='noList'>
+        <p>没有找到对应内容</p>
+        <a ng-click='concat()' class="btn btn-default">联系客服</a>
+    </div>
 	<ul class="downList" ng-if="showList">
 		<li class="item">			
             <div>

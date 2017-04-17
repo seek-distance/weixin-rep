@@ -86,6 +86,40 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
         getAddr: function(openId) {
             dailog.showLoad();
             return $http.get(host + "/ds/g/WxUser?condition[openId]="+openId);
+        },
+        getNonceStr:function(){
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(36);
+            });
+        },
+        getTs:function(){
+            return Math.floor((new Date()).getTime()/100).toString();
+        },
+        config:function(){
+            var noncestr=this.getNonceStr();
+            var ts=this.getTs();
+            //获取签名
+            $http.get(host + "/wx/js-api-sign", 
+                {
+                    params: {
+                        noncestr:noncestr,
+                        ts:ts,
+                        url:encodeURIComponent(location.href)
+                    }
+                }
+            ).success(function(data){
+                console.log(data);
+                /*wx.config({
+                    debug: true,
+                    appId: '', 
+                    timestamp: ,
+                    nonceStr: '',
+                    signature: '',
+                    jsApiList: [] 
+                });*/
+            })            
         }
     }
 }])
@@ -385,6 +419,18 @@ express:{
 }
 获取订单
 GET /ds/g/Order?condition[ownerOpenId]=********
+ */
+
+ /*
+加了两个接口:
+GET /ws/js-api-ticket
+无参数
+
+GET /wx/js-api-sign
+参数:
+noncestr
+ts
+url (这个得调用encodeURIComponent()
  */
 
 /*

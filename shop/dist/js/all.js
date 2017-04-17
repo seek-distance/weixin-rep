@@ -76,7 +76,7 @@ angular.module("ngTouch", [])
 });
 
 app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $urlRouterProvider ) {
-	$urlRouterProvider.otherwise('/home');
+	$urlRouterProvider.otherwise('/search-by-name');
 	$stateProvider
 	.state('home',{
 		url:'/home',
@@ -131,7 +131,7 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 }]);
 
 
-app.controller('index', ['$scope','$location','appid','weixin','dailog', function($scope,$location,appid,weixin,dailog){
+app.controller('index', ['$scope','$location','appid','weixin','dailog','searchByName', function($scope,$location,appid,weixin,dailog,searchByName){
 	/*if(!weixin.isweixin()){
 		location.url='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
 	}*/
@@ -139,6 +139,16 @@ app.controller('index', ['$scope','$location','appid','weixin','dailog', functio
 	$scope.closeFix=function(){
 		dailog.hide();
 	}
+	$scope.concat=function(){
+		var openId=weixin.getUserInfo().openId;
+		searchByName.concat({openId:openId}).then(function(obj){
+			dailog.hideLoad();
+			if (obj.status == '200') {
+				location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+			}
+		});
+	}
+	weixin.config();
 }]);
 
 app.controller('home', ['$scope', function($scope){
@@ -429,17 +439,6 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 		});
 	};
 
-	$scope.concat=function(){
-		var openId=weixin.getUserInfo().openId;
-		searchByName.concat({openId:openId}).then(function(obj){
-			dailog.hideLoad();
-			if (obj.status == '200') {
-				location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
-			}
-		});
-		
-	}
-
 	$scope.addToCart=function(firstKey,secondKey){	
 		var data = $scope.list[firstKey].parts[secondKey];
 		data.name=$scope.list[firstKey].name;
@@ -479,7 +478,7 @@ app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,se
 		}
 		searchPdf.search({part:encodeURIComponent($scope.searchPdf)}).success(function(data){
 			dailog.hideLoad();
-			if (!data  || data.pdfs2.length == 0) {
+			if (data.msg=='not found') {
 				$scope.showList = false;
 				$scope.noList=true;
 				return;
@@ -633,6 +632,40 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
         getAddr: function(openId) {
             dailog.showLoad();
             return $http.get(host + "/ds/g/WxUser?condition[openId]="+openId);
+        },
+        getNonceStr:function(){
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(36);
+            });
+        },
+        getTs:function(){
+            return Math.floor((new Date()).getTime()/100).toString();
+        },
+        config:function(){
+            var noncestr=this.getNonceStr();
+            var ts=this.getTs();
+            //获取签名
+            $http.get(host + "/wx/js-api-sign", 
+                {
+                    params: {
+                        noncestr:noncestr,
+                        ts:ts,
+                        url:encodeURIComponent(location.href)
+                    }
+                }
+            ).success(function(data){
+                console.log(data);
+                /*wx.config({
+                    debug: true,
+                    appId: '', 
+                    timestamp: ,
+                    nonceStr: '',
+                    signature: '',
+                    jsApiList: [] 
+                });*/
+            })            
         }
     }
 }])
@@ -932,6 +965,18 @@ express:{
 }
 获取订单
 GET /ds/g/Order?condition[ownerOpenId]=********
+ */
+
+ /*
+加了两个接口:
+GET /ws/js-api-ticket
+无参数
+
+GET /wx/js-api-sign
+参数:
+noncestr
+ts
+url (这个得调用encodeURIComponent()
  */
 
 /*

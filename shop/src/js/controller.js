@@ -1,4 +1,4 @@
-app.controller('index', ['$scope','$location','appid','weixin','dailog', function($scope,$location,appid,weixin,dailog){
+app.controller('index', ['$scope','$location','appid','weixin','dailog','searchByName', function($scope,$location,appid,weixin,dailog,searchByName){
 	/*if(!weixin.isweixin()){
 		location.url='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
 	}*/
@@ -6,6 +6,16 @@ app.controller('index', ['$scope','$location','appid','weixin','dailog', functio
 	$scope.closeFix=function(){
 		dailog.hide();
 	}
+	$scope.concat=function(){
+		var openId=weixin.getUserInfo().openId;
+		searchByName.concat({openId:openId}).then(function(obj){
+			dailog.hideLoad();
+			if (obj.status == '200') {
+				location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+			}
+		});
+	}
+	weixin.config();
 }]);
 
 app.controller('home', ['$scope', function($scope){
@@ -296,17 +306,6 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 		});
 	};
 
-	$scope.concat=function(){
-		var openId=weixin.getUserInfo().openId;
-		searchByName.concat({openId:openId}).then(function(obj){
-			dailog.hideLoad();
-			if (obj.status == '200') {
-				location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
-			}
-		});
-		
-	}
-
 	$scope.addToCart=function(firstKey,secondKey){	
 		var data = $scope.list[firstKey].parts[secondKey];
 		data.name=$scope.list[firstKey].name;
@@ -346,7 +345,7 @@ app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,se
 		}
 		searchPdf.search({part:encodeURIComponent($scope.searchPdf)}).success(function(data){
 			dailog.hideLoad();
-			if (!data  || data.pdfs2.length == 0) {
+			if (data.msg=='not found') {
 				$scope.showList = false;
 				$scope.noList=true;
 				return;

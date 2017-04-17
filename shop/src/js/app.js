@@ -76,7 +76,7 @@ angular.module("ngTouch", [])
 });
 
 app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $urlRouterProvider ) {
-	$urlRouterProvider.otherwise('/home');
+	$urlRouterProvider.otherwise('/search-by-name');
 	$stateProvider
 	.state('home',{
 		url:'/home',
