@@ -21,9 +21,6 @@ app.controller('index', ['$scope','$location','appid','weixin','dailog','searchB
 			}
 		});
 	}
-    weixin.getMessage(weixin.getUserInfo().openId).success(function(data){
-                    console.log(data)
-                })
 }]);
 
 app.controller('home', ['$scope', function($scope){
@@ -346,7 +343,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 
 }]);
 
-app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,searchPdf,dailog){
+app.controller('searchByPdf', ['$scope','searchPdf','dailog','weixin', function($scope,searchPdf,dailog,weixin){
     weixin.config();
 	$scope.submit=function(){
 		if (!$scope.searchPdf) {
