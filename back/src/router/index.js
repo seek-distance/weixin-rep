@@ -5,6 +5,7 @@ import login from '@/components/login'
 import user from '@/components/user'
 import shop from '@/components/shop'
 import classify from '@/components/classify'
+import order from '@/components/order'
 
 Vue.use(Router)
 
@@ -15,10 +16,11 @@ export default new Router({
       name: 'main',
       component: main,
       children:[
-          {path:'/',component:user},
+          {path:'/',component:order},
           {path:'/user',component:user},
           {path:'/shop',component:shop},
-          {path:'/classify',component:classify}
+          {path:'/classify',component:classify},
+          {path:'/order',component:order}
       ]
     },
     {

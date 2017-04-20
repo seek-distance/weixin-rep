@@ -18,7 +18,7 @@
         <div class="content">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item @click.native='change(0)' :to="{ path: '/user' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item v-for="(val,i) in bread" :to='val.path'>{{val.name}}</el-breadcrumb-item>
+                <el-breadcrumb-item v-for="(val,key) in bread" :to='val.path'>{{val.name}}</el-breadcrumb-item>
             </el-breadcrumb>
             <div>
                 <router-view></router-view>
@@ -38,9 +38,10 @@ export default {
     data() {
         return {
             nav: [
-                { name: '用户管理', path: '/user'},
-                { name: '商品管理', path: 'shop'},
-                { name: '分类管理', path: 'classify'}
+                // { name: '用户管理', path: 'user'},
+                // { name: '商品管理', path: 'shop'},
+                // { name: '分类管理', path: 'classify'},
+                { name: '订单管理', path: 'order'}
             ],
         }
     },
@@ -58,7 +59,7 @@ export default {
     },
     mounted () {
         if(this.$route.path == '/'){
-            router.push('user');
+            router.push('order');
         }
     }
 }
@@ -67,6 +68,9 @@ export default {
 <style lang='scss' scoped>
 $fontColor:#fff;
 $background:#1c2b36;
+.content{
+    padding-bottom: 20px;
+}
 .leftnav {
     background: $background;
     width: 20%;

@@ -28,9 +28,7 @@ app.factory('dailog', ['$state', function($state) {
 
 app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$http,dailog) {
     return {
-        config: {
-            url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
-        },
+        url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
         isweixin: function() {
             var ua = window.navigator.userAgent.toLowerCase();
             if (ua.match(/MicroMessenger/i) == 'micromessenger') {
@@ -46,7 +44,7 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
             return null;
         },
         getUser: function(code) {
-            dailog.showLoad();
+            console.log(code);
             var xhr = new XMLHttpRequest();
             xhr.open("POST", host + "/wx/code", false);
             xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -74,7 +72,7 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
                     this.getUser(this.getQueryString('code'));
                     return JSON.parse(localStorage.getItem('MY_USER_INFO'));
                 } else {
-                    window.location.href = this.config.url;
+                    window.location.href = this.url;
                 }
             }
         },
@@ -83,7 +81,7 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
             info[name]=value;
             localStorage.setItem('MY_USER_INFO', JSON.stringify(info));
         },
-        getAddr: function(openId) {
+        getMessage: function(openId) {
             dailog.showLoad();
             return $http.get(host + "/ds/g/WxUser?condition[openId]="+openId);
         },
@@ -110,15 +108,14 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
                     }
                 }
             ).success(function(data){
-                console.log(data);
-                /*wx.config({
+                wx.config({
                     debug: true,
-                    appId: '', 
-                    timestamp: ,
-                    nonceStr: '',
-                    signature: '',
-                    jsApiList: [] 
-                });*/
+                    appId: appid, 
+                    timestamp: ts,
+                    nonceStr: noncestr,
+                    signature: data.sign,
+                    jsApiList: ['closeWindow']
+                });
             })            
         }
     }

@@ -7,7 +7,7 @@ export default new Vuex.Store({
     state:{
         username:'admin',
         showFix:false,
-        bread:[{ name: '用户管理', path: '/user'}]
+        bread:[{ name: '订单管理', path: '/user'}]
     },
     mutations: {
         setBread(state,value){

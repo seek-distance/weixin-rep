@@ -144,11 +144,19 @@ app.controller('index', ['$scope','$location','appid','weixin','dailog','searchB
 		searchByName.concat({openId:openId}).then(function(obj){
 			dailog.hideLoad();
 			if (obj.status == '200') {
-				location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+                weixin.getMessage(weixin.getUserInfo().openId).success(function(data){
+                    if(data[0].subscribe=="1"){
+                        wx.closeWindow()
+                    }else{
+                        location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI3MTY2NjIwNg==&scene=124#wechat_redirect';
+                    }
+                })
 			}
 		});
 	}
-	weixin.config();
+    weixin.getMessage(weixin.getUserInfo().openId).success(function(data){
+                    console.log(data)
+                })
 }]);
 
 app.controller('home', ['$scope', function($scope){
@@ -322,7 +330,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
 	if ($rootScope.currentAddr) {
 		$scope.address = $rootScope.currentAddr;
 	}else{
-		weixin.getAddr(weixin.getUserInfo().openId).then(function(obj){
+		weixin.getMessage(weixin.getUserInfo().openId).then(function(obj){
 			dailog.hideLoad();
 			$rootScope.AllAddr = obj.data[0].receiveAddrs;
 			$scope.address = $rootScope.AllAddr[0];
@@ -352,7 +360,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
 app.controller('address', ['$scope','weixin','$rootScope','$state','dailog', function($scope,weixin,$rootScope,$state,dailog){
 	var openId=weixin.getUserInfo().openId;
 
-	weixin.getAddr(openId).then(function(obj){
+	weixin.getMessage(openId).then(function(obj){
 		dailog.hideLoad();
 		$scope.address=obj.data[0].receiveAddrs;
 		$rootScope.AllAddr = $scope.address;
@@ -399,6 +407,7 @@ app.controller('address_add', ['$scope','address_add','weixin','dailog', functio
 app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','dailog', function($scope,searchByName,$rootScope,weixin,dailog){
 	$scope.showList=false;
 	$scope.noList=false;
+    weixin.config();
 
 	searchByName.rate().success(function(data){
 		dailog.hideLoad();
@@ -433,7 +442,6 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 					}
 					key++;							
 				}
-				console.log(data.distributors);
 				$scope.list=searchByName.changePrice(data.distributors);
 			}		
 		});
@@ -472,6 +480,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 }]);
 
 app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,searchPdf,dailog){
+    weixin.config();
 	$scope.submit=function(){
 		if (!$scope.searchPdf) {
 			return;
@@ -492,7 +501,6 @@ app.controller('searchByPdf', ['$scope','searchPdf','dailog', function($scope,se
 }]);
 
 app.controller('contact', ['$scope','contact','weixin','dailog', function($scope,contact,weixin,dailog){
-	$scope.success=false;
 	$scope.submit=function(){
 		contact.submit({
 			openId:weixin.getUserInfo().openId,
@@ -501,6 +509,7 @@ app.controller('contact', ['$scope','contact','weixin','dailog', function($scope
 			dailog.hideLoad();
 			if (obj.data.msg == 'ok') {
 				$scope.success=true;
+                $scope.getPhone();
 			}else{
 				$scope.success=false;
 			}
@@ -508,6 +517,21 @@ app.controller('contact', ['$scope','contact','weixin','dailog', function($scope
 			$scope.success=false;
 		})
 	}
+    $scope.getPhone=function(){
+        weixin.getMessage(weixin.getUserInfo().openId).success(function(data){
+            dailog.hideLoad();
+            if(data[0].phone){
+                $scope.phone=data[0].phone;
+                $scope.hasPhone=true;
+                $scope.placeholder="更新手机号码";
+            }else{
+                $scope.hasPhone=false;
+                $scope.placeholder="请填写手机号码";
+            }        
+        })
+    }
+	$scope.success=false;
+    $scope.getPhone();
 }]);
 
 
@@ -574,9 +598,7 @@ app.factory('dailog', ['$state', function($state) {
 
 app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$http,dailog) {
     return {
-        config: {
-            url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
-        },
+        url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
         isweixin: function() {
             var ua = window.navigator.userAgent.toLowerCase();
             if (ua.match(/MicroMessenger/i) == 'micromessenger') {
@@ -592,7 +614,7 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
             return null;
         },
         getUser: function(code) {
-            dailog.showLoad();
+            console.log(code);
             var xhr = new XMLHttpRequest();
             xhr.open("POST", host + "/wx/code", false);
             xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -620,7 +642,7 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
                     this.getUser(this.getQueryString('code'));
                     return JSON.parse(localStorage.getItem('MY_USER_INFO'));
                 } else {
-                    window.location.href = this.config.url;
+                    window.location.href = this.url;
                 }
             }
         },
@@ -629,7 +651,7 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
             info[name]=value;
             localStorage.setItem('MY_USER_INFO', JSON.stringify(info));
         },
-        getAddr: function(openId) {
+        getMessage: function(openId) {
             dailog.showLoad();
             return $http.get(host + "/ds/g/WxUser?condition[openId]="+openId);
         },
@@ -656,15 +678,14 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
                     }
                 }
             ).success(function(data){
-                console.log(data);
-                /*wx.config({
+                wx.config({
                     debug: true,
-                    appId: '', 
-                    timestamp: ,
-                    nonceStr: '',
-                    signature: '',
-                    jsApiList: [] 
-                });*/
+                    appId: appid, 
+                    timestamp: ts,
+                    nonceStr: noncestr,
+                    signature: data.sign,
+                    jsApiList: ['closeWindow']
+                });
             })            
         }
     }
