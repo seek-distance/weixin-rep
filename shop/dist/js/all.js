@@ -676,7 +676,7 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
                 }
             ).success(function(data){
                 wx.config({
-                    debug: true,
+                    debug: false,
                     appId: appid, 
                     timestamp: ts,
                     nonceStr: noncestr,
