@@ -1,12 +1,11 @@
 <template>
     <div>
         <div class="home-head clearfix">
-            <router-link to='/' class="home-title">后台管理</router-link>
+            <router-link to='/order' class="home-title">后台管理</router-link>
             <div class="home-user pull-right">
                 <span v-text="username"></span>
-                <router-link to='login'
-                             class="home-login">退出系统</router-link>
-                <router-link to='login'
+                <span style="cursor:pointer" @click='logOut' class="home-login">退出系统</span>
+                <router-link to="/login/update"
                              class="home-login">修改密码</router-link>
             </div>
         </div>
@@ -31,6 +30,7 @@
 </template>
 
 <script>
+let host='https://chip.jymao.com';
 import { mapState } from 'vuex'
 import router from '../router'
 export default {
@@ -41,7 +41,8 @@ export default {
                 // { name: '用户管理', path: 'user'},
                 // { name: '商品管理', path: 'shop'},
                 // { name: '分类管理', path: 'classify'},
-                { name: '订单管理', path: 'order'}
+                { name: '订单管理', path: 'order'},
+                { name: '用户管理', path: 'user'}
             ],
         }
     },
@@ -55,12 +56,24 @@ export default {
         change(i) {
             let bread = [this.nav[i]];
             this.$store.commit('setBread', bread);
+        },
+        logOut(){            
+            this.$http.post(host+'/ds/logout').then((obj)=>{
+                sessionStorage.removeItem('username');
+                router.push('/login/log')
+            })            
         }
     },
     mounted () {
         if(this.$route.path == '/'){
             router.push('order');
         }
+        if(!sessionStorage.getItem('username')){
+            router.push('/login/log')
+        }
+        this.$http.get(host+'/ds/has-login').then(function(obj){
+            console.log(obj);
+        })
     }
 }
 </script>

@@ -16,6 +16,14 @@ Vue.config.debug = true
 Vue.use(VueResource);
 Vue.use(ElementUI);
 
+Vue.http.options.emulateJSON = true;
+Vue.http.interceptors.push( function(request, next){
+	request.credentials = true;
+	next( ( response ) => {
+		return response;
+	});
+});
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

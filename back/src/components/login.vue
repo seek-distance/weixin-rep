@@ -26,28 +26,62 @@
 				<span class="pull-left">新密码</span>
 				<input class="pull-left" type="password" v-model="newPwd">
 			</div>
-			<button style="display: block;margin:0 auto;width: 100px;height: 40px;" @click="updatePwd()" class="btn btn-info">修改</button>
+			<el-button style="display: block;margin:0 auto;width: 100px;height: 40px;" @click="updatePwd()" class="btn btn-info">修改</el-button>
 		</form>		
 	</div>
 </div>
 </template>
 <script>
-    export default{
-        data(){
-            return{
-                update:false,
-                success:true
-            }
+let host='https://chip.jymao.com';
+export default{
+    data(){
+        return{
+            update:false,
+            success:true,
+            username:'',
+            password:'',
+            oldPwd:'',
+            newPwd:'',
+        }
+    },
+    methods: {
+        submit(){
+            var self=this;
+            this.$http.post(host+'/ds/login',{
+                name:this.username,
+                password:this.password
+            }).then((obj)=>{
+                var data=obj.data;
+                if(data.msg=='login ok'){
+                    self.success=true;
+                    sessionStorage.setItem('username',self.username);
+                    self.$store.state.username=self.username;
+                    self.$router.push('/');
+                }else{
+                    self.success=false;
+                }
+            },()=>{
+                self.success=false;
+            })
         },
-        methods: {
-            submit(){
-
-            },
-            updatePwd(){
-
-            }
+        updatePwd(){
+            var self=this;
+            this.$http.post(host+'/ds/user/new-password',{
+                newPwd:this.newPwd,
+                oldPwd:this.oldPwd
+            }).then((obj)=>{
+                self.$router.push('/');
+            },()=>{
+                alert('原密码错误');
+            })
+        }
+    },
+    mounted () {
+        if(this.$router.currentRoute.params.type=='update'){
+            this.update=true;
         }
     }
+}
 </script>
 <style scoped>
 .login-bg{
