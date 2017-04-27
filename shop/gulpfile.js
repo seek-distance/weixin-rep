@@ -86,11 +86,11 @@ gulp.task('jsHint',function(){
 
 //监听文件变化
 gulp.task('watch',function(){
-	gulp.watch('src/js/*.js',['concat-js','jsHint']);
+	gulp.watch('src/js/*.js',['concat-js']);
 	gulp.watch('src/scss/*',['changeToCss']);
 	gulp.watch('src/css/*.css',['concat-css']);
 	gulp.watch('src/css/static/*.css',['concat-staticCSS']);
 	gulp.watch('dist/*/*',['reload']);
 });
 
-gulp.task('default',['webserver','changeToCss','concat-staticCSS','concat-js','jsHint','watch']);
+gulp.task('default',['webserver','changeToCss','concat-staticCSS','concat-js','watch']);

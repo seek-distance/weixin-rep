@@ -1,4 +1,4 @@
-app.constant('appid', 'wx72b8722be094d273');
+app.constant('appId', 'wx72b8722be094d273');
 app.constant('host', 'https://chip.jymao.com');
 
 app.factory('dailog', ['$state', function($state) {
@@ -26,9 +26,9 @@ app.factory('dailog', ['$state', function($state) {
 
 }])
 
-app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$http,dailog) {
+app.factory('weixin', ['appId', 'host','$http','dailog','$state', function(appId, host,$http,dailog,$state) {
     return {
-        url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
+        url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appId=' + appId + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
         isweixin: function() {
             var ua = window.navigator.userAgent.toLowerCase();
             if (ua.match(/MicroMessenger/i) == 'micromessenger') {
@@ -44,7 +44,6 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
             return null;
         },
         getUser: function(code) {
-            console.log(code);
             var xhr = new XMLHttpRequest();
             xhr.open("POST", host + "/wx/code", false);
             xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -110,13 +109,42 @@ app.factory('weixin', ['appid', 'host','$http','dailog', function(appid, host,$h
             ).success(function(data){
                 wx.config({
                     debug: false,
-                    appId: appid, 
+                    appId: appId, 
                     timestamp: ts,
                     nonceStr: noncestr,
                     signature: data.sign,
-                    jsApiList: ['closeWindow']
+                    jsApiList: ['closeWindow','chooseWXPay']
                 });
             })            
+        },
+        pay:function(orderId){
+            var option={};
+            this.getPayOption(orderId).success(function(data){
+                option=data;
+                if (typeof WeixinJSBridge == "undefined"){
+                    if( document.addEventListener ){
+                        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                    }else if (document.attachEvent){
+                        document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+                        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                    }
+                }else{
+                    onBridgeReady();
+                }
+            })
+            function onBridgeReady(){
+                WeixinJSBridge.invoke('getBrandWCPayRequest', option, function(res){     
+                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                        $state.go('order');
+                    }else{
+                        
+                    }
+                })
+            }
+            
+        },
+        getPayOption:function(orderId){
+            return $http.post(host+'/ds/order/wx-pay-order',{orderId:orderId})
         }
     }
 }])
@@ -399,10 +427,25 @@ POST /ds/order
         }
     ],
     totalPrice:{type:"Number"},
-    ownerOpenId:...
+    ownerOpenId:...,
+    descr: 订单描述 (譬如部件名之类的信息)
 }
-
+返回一个 orderId:
 */
+
+/*
+POST /ds/order/wx-pay-order
+传入 orderId
+{
+    "appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入     
+    "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+    "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
+    "package":"prepay_id=u802345jgfjsdfgsdg888",     
+    "signType":"MD5",         //微信签名方式：     
+    "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
+}
+*/
+
  /*
 设置订单的快递信息(已付款订单才可以设置)
 Post /ds/order/expressed
