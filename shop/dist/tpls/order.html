@@ -46,7 +46,7 @@
 					<ul id="OrderList">
 						<li ng-repeat="(key, value) in orders" ng-click='showCurrent(key)' style="margin-bottom: 5px;">
 							<div class="order items" style="height: auto;padding-right: 10px;">
-								<a class="lnk">
+								<div class="lnk">
 									<div class="order_info" style="padding-top: 8px">
 										<dl> 
 											<dt class="add_time">订单日期：{{value.createdAt.slice(0,10)}} </dt>
@@ -83,7 +83,7 @@
 											</dd>
 										</dl>
 									</div>
-								</a>
+								</div>
 							</div>
 						</li>
 					</ul>

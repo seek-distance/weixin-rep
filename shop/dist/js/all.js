@@ -319,7 +319,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
 		    subOrders:subOrders,
 		    totalPrice:$scope.shopTotalPrice*100,
 		    ownerOpenId:weixin.getUserInfo().openId,
-            descr:'test'
+            descr:subOrders[0].partName
 		}).then(function(obj){
 			dailog.hideLoad();
             var orderId=obj.data.orderId;
@@ -703,6 +703,7 @@ app.factory('weixin', ['appId', 'host','$http','dailog','$state', function(appId
                 WeixinJSBridge.invoke('getBrandWCPayRequest', option, function(res){     
                     if(res.err_msg == "get_brand_wcpay_request:ok" ) {
                         $state.go('order');
+                        location.reload();
                     }else{
                         
                     }

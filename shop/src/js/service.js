@@ -136,6 +136,7 @@ app.factory('weixin', ['appId', 'host','$http','dailog','$state', function(appId
                 WeixinJSBridge.invoke('getBrandWCPayRequest', option, function(res){     
                     if(res.err_msg == "get_brand_wcpay_request:ok" ) {
                         $state.go('order');
+                        location.reload();
                     }else{
                         
                     }
