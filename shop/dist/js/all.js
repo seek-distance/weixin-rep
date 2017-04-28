@@ -89,7 +89,8 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		controller:'cart'
 	})
 	.state('order',{
-		url:'/my-orders',
+		url:'/my-orders',        
+        cache:'false', 
 		templateUrl:'dist/tpls/order.html',
 		controller:'order'
 	})
@@ -289,7 +290,7 @@ app.controller('orderManage', ['$scope','order','weixin','$state','dailog', func
 	}
 }]);
 
-app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder', function($scope,$rootScope,weixin,dailog,checkOrder){
+app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder','cart', function($scope,$rootScope,weixin,dailog,checkOrder,cart){
     weixin.config();
 	$scope.shopPrice=function(){
 		var sum=0;
@@ -322,6 +323,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
             descr:subOrders[0].partName
 		}).then(function(obj){
 			dailog.hideLoad();
+            cart.removeSelected();
             var orderId=obj.data.orderId;
 			weixin.pay(orderId);
 		})
@@ -593,7 +595,7 @@ app.factory('dailog', ['$state', function($state) {
 
 }])
 
-app.factory('weixin', ['appId', 'host','$http','dailog','$state', function(appId, host,$http,dailog,$state) {
+app.factory('weixin', ['appId', 'host','$http','dailog','$state','$timeout', function(appId, host,$http,dailog,$state,$timeout) {
     return {
         url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appId=' + appId + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
         isweixin: function() {
@@ -701,12 +703,16 @@ app.factory('weixin', ['appId', 'host','$http','dailog','$state', function(appId
             })
             function onBridgeReady(){
                 WeixinJSBridge.invoke('getBrandWCPayRequest', option, function(res){     
-                    if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                    /*if(res.err_msg == "get_brand_wcpay_request:ok" ) {
                         $state.go('order');
                         location.reload();
                     }else{
                         
-                    }
+                    }*/
+                    $state.go('order');
+                    $timeout(function(){
+                        location.reload();
+                    },300)                    
                 })
             }
             
@@ -728,7 +734,7 @@ app.factory('swipe', [function() {
     };
 }]);
 
-app.factory('cart', [function() {
+app.factory('cart', ['weixin',function(weixin) {
     return {
         totalPrice:function(data){
             var sum = 0;
@@ -752,7 +758,16 @@ app.factory('cart', [function() {
                 }
             }
             return sum;
-        }      
+        },
+        removeSelected:function(){
+            var shops=weixin.getUserInfo().cart;
+            for(var i=shops.length-1;i>=0;i--){
+                if(shops[i].selected){
+                    shops.splice(i,1);
+                }
+            }
+            weixin.setUserInfo('cart',shops);
+        }  
     };
 }]);
 

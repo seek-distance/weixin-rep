@@ -156,7 +156,7 @@ app.controller('orderManage', ['$scope','order','weixin','$state','dailog', func
 	}
 }]);
 
-app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder', function($scope,$rootScope,weixin,dailog,checkOrder){
+app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder','cart', function($scope,$rootScope,weixin,dailog,checkOrder,cart){
     weixin.config();
 	$scope.shopPrice=function(){
 		var sum=0;
@@ -189,6 +189,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
             descr:subOrders[0].partName
 		}).then(function(obj){
 			dailog.hideLoad();
+            cart.removeSelected();
             var orderId=obj.data.orderId;
 			weixin.pay(orderId);
 		})

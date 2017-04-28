@@ -89,7 +89,8 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		controller:'cart'
 	})
 	.state('order',{
-		url:'/my-orders',
+		url:'/my-orders',        
+        cache:'false', 
 		templateUrl:'dist/tpls/order.html',
 		controller:'order'
 	})
