@@ -275,6 +275,7 @@ app.controller('address_add', ['$scope','address_add','weixin','dailog', functio
 app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','dailog', function($scope,searchByName,$rootScope,weixin,dailog){
 	$scope.showList=false;
 	$scope.noList=false;
+    $scope.lists=[];
     weixin.config();
 
 	searchByName.rate().success(function(data){
@@ -288,37 +289,50 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 			return;
 		}
 		searchByName.search({part:encodeURIComponent($scope.searchName)}).success(function(data){
-			dailog.hideLoad();
-			if (!data.distributors || data.distributors.length == 0 && data.icKeys.length == 0) {
-				$scope.showList = false;
-				$scope.noList=true;
-				return;
-			}else{
-				$scope.noList=false;
-				$scope.showList = true;
-				for (var i = 0; i < data.icKeys.length; i++) {
-					if(data.icKeys[i].name=='云汉芯城'){
-						data.icKeys[i].name='ic购商城';
-						data.distributors.push(data.icKeys[i]);
-					}
-				}
-				var key=0;
-				while (data.distributors.length<3) {
-					if (!data.icKeys[key])	break;
-					if (!searchByName.hasItem(data.distributors,data.icKeys[key])) {
-						data.distributors.push(data.icKeys[key]);
-					}
-					key++;							
-				}
-				$scope.list=searchByName.changePrice(data.distributors);
-			}		
+            dailog.hideLoad();
+            var flag=false;
+            for(var j=0;j<data.length;j++){
+                if (!data[j].distributors || data[j].distributors.length == 0 && data[j].icKeys.length == 0) {
+                    if(!flag){
+                        $scope.showList = false;
+                        $scope.noList=true;
+                    }                    
+                    continue;
+                }else{
+                    flag=true;
+                    $scope.noList=false;
+                    $scope.showList = true;
+                    for (var i = 0; i < data[j].icKeys.length; i++) {
+                        if(data[j].icKeys[i].name=='云汉芯城'){
+                            data[j].icKeys[i].name='ic购商城';
+                            data[j].distributors.push(data.icKeys[i]);
+                        }
+                    }
+                    var key=0;
+                    while (data[j].distributors.length<3) {
+                        if (!data[j].icKeys[key])	break;
+                        if (!searchByName.hasItem(data[j].distributors,data[j].icKeys[key])) {
+                            data[j].distributors.push(data[j].icKeys[key]);
+                        }
+                        key++;
+                        if(key>10)  break;					
+                    }
+                    var item={
+                        list:searchByName.changePrice(data[j].distributors),
+                        name:data[j].name
+                    };
+                    $scope.lists.push(item);
+                }
+                console.log($scope.lists);
+            }
+					
 		});
 	};
 
-	$scope.addToCart=function(firstKey,secondKey){	
-		var data = $scope.list[firstKey].parts[secondKey];
-		data.name=$scope.list[firstKey].name;
-		data.shopName=$scope.searchName;
+	$scope.addToCart=function(index,firstKey,secondKey){
+		var data = $scope.lists[index].list[firstKey].parts[secondKey];
+		data.name=$scope.lists[index].list[firstKey].name;
+		data.shopName=$scope.lists[index].name;
 		data.singlePrice=data.prices[0].changePrice;
 		data.selected=true;
 		var cart=weixin.getUserInfo().cart;

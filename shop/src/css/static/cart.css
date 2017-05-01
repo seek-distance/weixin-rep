@@ -380,7 +380,7 @@ body,
 }
 
 .cart-index-wrap .bottom-submit {
-    height: 56px;
+    height: 1rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -483,7 +483,7 @@ body,
 .cart-index-wrap .bottom-submit .btn a{
 	display: block;
 	text-align: center;
-	line-height: 56px;
+	line-height: 1rem;
 	font-size: .4rem;
 	color: #333;
 	background: #f4f4f4;
