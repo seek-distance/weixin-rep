@@ -18,12 +18,11 @@ Vue.use(VueResource);
 Vue.use(ElementUI);
 
 Vue.prototype.$host='http://chip.jymao.com';
-Vue.prototype.$load=Loading.service;
 
 Vue.http.options.emulateJSON = true;
 Vue.http.interceptors.push( function(request, next){
 	request.credentials = true;
-    let load=this.$load({
+    let load=this.$loading({
         lock:true
     });
 	next( ( response ) => {
