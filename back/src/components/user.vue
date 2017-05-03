@@ -1,10 +1,7 @@
 <template>
     <div>
         <div class="reg">
-            <input v-model="name" type="text" placeholder="用户名">
-            <label>
-                <input v-model="isAdmin" type="checkbox" name='admin'>是否为管理员
-            </label>
+            <input v-model="name" id="name" type="text" placeholder="用户名">
             <el-button @click="reg()">增加用户</el-button>
         </div>
         
@@ -32,7 +29,6 @@
 </template>
 
 <script>
-let host='https://chip.jymao.com';
 export default {
     data() {
         return {
@@ -44,7 +40,7 @@ export default {
     methods: {
         getUser(){
             let self=this;
-            this.$http.get(host+'/ds/g/User').then((obj)=>{
+            this.$http.get(this.$host+'/ds/g/User').then((obj)=>{
                 self.userData=obj.data
             })
         },
@@ -53,7 +49,7 @@ export default {
             console.log(self.userData[index].name)
             var isdel=confirm("是否删除该用户");
             if(isdel){
-                this.$http.delete(host+'/ds/user',{
+                this.$http.delete(this.$host+'/ds/user',{
                     body:{name:self.userData[index].name}                    
                 }).then((obj)=>{
                     self.getUser();
@@ -62,12 +58,11 @@ export default {
         },
         reg(){
             let self=this;
-            let data={name:this.name};
-            if(this.name=='')   return;
-            if(this.isAdmin){
-                data.role='admin';
+            let data={name:this.name,role:'admin'};
+            if(this.name==''){
+                document.getElementById("name").focus();
             }
-            this.$http.post(host+'/ds/user',data).then((obj)=>{
+            this.$http.post(this.$host+'/ds/user',data).then((obj)=>{
                 self.getUser();
                 self.name='';
                 self.isAdmin=false;
@@ -82,7 +77,7 @@ export default {
 <style scoped lang='scss'>
     .reg{
         >input{
-            height:25px;
+            height:35px;
         }
         margin-bottom: 10px;
     }

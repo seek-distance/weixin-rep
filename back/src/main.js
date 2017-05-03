@@ -9,6 +9,7 @@ import './assets/css/reset.css'
 import './assets/css/font-awesome.min.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import { Loading } from 'element-ui';
 
 Vue.config.productionTip = false
 Vue.config.debug = true
@@ -16,13 +17,21 @@ Vue.config.debug = true
 Vue.use(VueResource);
 Vue.use(ElementUI);
 
+Vue.prototype.$host='http://chip.jymao.com';
+Vue.prototype.$load=Loading.service;
+
 Vue.http.options.emulateJSON = true;
 Vue.http.interceptors.push( function(request, next){
 	request.credentials = true;
+    let load=this.$load({
+        lock:true
+    });
 	next( ( response ) => {
+        load.close();
 		return response;
 	});
 });
+
 
 /* eslint-disable no-new */
 new Vue({

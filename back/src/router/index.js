@@ -3,9 +3,8 @@ import Router from 'vue-router'
 import main from '@/components/main'
 import login from '@/components/login'
 import user from '@/components/user'
-import shop from '@/components/shop'
-import classify from '@/components/classify'
 import order from '@/components/order'
+import concat from '@/components/concat'
 
 Vue.use(Router)
 
@@ -18,9 +17,8 @@ export default new Router({
       children:[
           {path:'/',component:order},
           {path:'/user',component:user},
-          {path:'/shop',component:shop},
-          {path:'/classify',component:classify},
-          {path:'/order',component:order}
+          {path:'/order',component:order},
+          {path:'/concat',component:concat}
       ]
     },
     {

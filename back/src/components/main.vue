@@ -30,7 +30,6 @@
 </template>
 
 <script>
-let host='https://chip.jymao.com';
 import { mapState } from 'vuex'
 import router from '../router'
 export default {
@@ -38,11 +37,9 @@ export default {
     data() {
         return {
             nav: [
-                // { name: '用户管理', path: 'user'},
-                // { name: '商品管理', path: 'shop'},
-                // { name: '分类管理', path: 'classify'},
                 { name: '订单管理', path: 'order'},
-                { name: '用户管理', path: 'user'}
+                { name: '用户管理', path: 'user'},
+                { name: '手机号码', path: 'concat'}
             ],
         }
     },
@@ -58,7 +55,7 @@ export default {
             this.$store.commit('setBread', bread);
         },
         logOut(){            
-            this.$http.post(host+'/ds/logout').then((obj)=>{
+            this.$http.post(this.$host+'/ds/logout').then((obj)=>{
                 sessionStorage.removeItem('username');
                 router.push('/login/log')
             })            
@@ -71,9 +68,6 @@ export default {
         if(!sessionStorage.getItem('username')){
             router.push('/login/log')
         }
-        this.$http.get(host+'/ds/has-login').then(function(obj){
-            console.log(obj);
-        })
     }
 }
 </script>

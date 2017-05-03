@@ -8,10 +8,10 @@
         <p>没有找到部件{{searchName}}，请进入公众号联系客服查询</p>
         <a ng-click='concat()' class="btn btn-default">联系客服</a>
     </div>
-    <div ng-if="showList">
+    <div class="content" ng-if="showList">
         <div class="lists" ng-repeat="(index,va) in lists">
             <div class="name">
-                <i class="fa fa-search"></i>
+                <i class="fa fa-microchip"></i>
                 <span ng-bind="va.name"></span>
             </div>
             <ul>

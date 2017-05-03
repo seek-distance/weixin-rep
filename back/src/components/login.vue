@@ -32,7 +32,6 @@
 </div>
 </template>
 <script>
-let host='https://chip.jymao.com';
 export default{
     data(){
         return{
@@ -47,7 +46,7 @@ export default{
     methods: {
         submit(){
             var self=this;
-            this.$http.post(host+'/ds/login',{
+            this.$http.post(this.$host+'/ds/login',{
                 name:this.username,
                 password:this.password
             }).then((obj)=>{
@@ -66,7 +65,7 @@ export default{
         },
         updatePwd(){
             var self=this;
-            this.$http.post(host+'/ds/user/new-password',{
+            this.$http.post(this.$host+'/ds/user/new-password',{
                 newPwd:this.newPwd,
                 oldPwd:this.oldPwd
             }).then((obj)=>{

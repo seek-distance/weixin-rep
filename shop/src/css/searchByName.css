@@ -22,8 +22,8 @@
     .search .error p {
       line-height: 30px; }
   .search .sell {
-    height: 0.6rem;
-    line-height: 0.6rem;
+    height: 0.8rem;
+    line-height: 0.8rem;
     font-size: 0.3rem; }
     .search .sell i {
       padding: 0 10px; }
@@ -46,3 +46,7 @@
     margin: 0 10px;
     border-radius: 5px;
     border: 1px solid #c0c0c0; }
+  .search table {
+    margin-bottom: 0; }
+  .search .content {
+    padding-bottom: 20px; }

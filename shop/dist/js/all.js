@@ -423,8 +423,14 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 			return;
 		}
 		searchByName.search({part:encodeURIComponent($scope.searchName)}).success(function(data){
+            $scope.lists=[];
             dailog.hideLoad();
             var flag=false;
+            if (data.msg=='not found') {
+                $scope.showList = false;
+                $scope.noList=true;
+                return;
+            }
             for(var j=0;j<data.length;j++){
                 if (!data[j].distributors || data[j].distributors.length == 0 && data[j].icKeys.length == 0) {
                     if(!flag){
@@ -439,7 +445,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
                     for (var i = 0; i < data[j].icKeys.length; i++) {
                         if(data[j].icKeys[i].name=='云汉芯城'){
                             data[j].icKeys[i].name='ic购商城';
-                            data[j].distributors.push(data.icKeys[i]);
+                            data[j].distributors.push(data[j].icKeys[i]);
                         }
                     }
                     var key=0;
@@ -496,22 +502,31 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 }]);
 
 app.controller('searchByPdf', ['$scope','searchPdf','dailog','weixin', function($scope,searchPdf,dailog,weixin){
+    $scope.lists=[];
     weixin.config();
+
 	$scope.submit=function(){
 		if (!$scope.searchPdf) {
 			return;
 		}
 		searchPdf.search({part:encodeURIComponent($scope.searchPdf)}).success(function(data){
+            $scope.lists=[];
 			dailog.hideLoad();
-			if (data.msg=='not found') {
-				$scope.showList = false;
-				$scope.noList=true;
-				return;
-			}else{
-				$scope.noList=false;
-				$scope.showList = true;
-				$scope.list=data.pdfs2;
-			}
+            if (data.msg=='not found') {
+                $scope.showList = false;
+                $scope.noList=true;
+                return;
+            }
+            $scope.noList=false;
+            $scope.showList = true;
+            for(var i=0;i<data.length;i++){
+                var item={
+                    name:data[i].name,
+                    list:data[i].pdfs2
+                }
+                $scope.lists.push(item);
+            }
+			
 		});
 	};
 }]);

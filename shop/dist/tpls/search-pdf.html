@@ -7,28 +7,36 @@
         <p>没有找到对应内容</p>
         <a ng-click='concat()' class="btn btn-default">联系客服</a>
     </div>
-	<ul class="downList" ng-if="showList">
-		<li class="item">			
-            <div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>生产商</th>
-                            <th>语言</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="(k, val) in list">
-                            <td>{{val.maker}}</td>
-                            <td>{{val.language}}</td>
-                            <td style="min-width: 70px">
-                                <a href="{{val.link}}" target="_blank" class="download">下载</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+    <div class="content" ng-if="showList">
+        <div class="lists" ng-repeat="(index,va) in lists" ng-if="va.list.length!=0">
+            <div class="name">
+                <i class="fa fa-file-pdf-o"></i>
+                <span ng-bind="va.name"></span>
             </div>
-		</li>
-	</ul>
+            <ul class="downList">
+                <li class="item">			
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>生产商</th>
+                                    <th>语言</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="(k, val) in va.list">
+                                    <td>{{val.maker}}</td>
+                                    <td>{{val.language}}</td>
+                                    <td style="min-width: 70px">
+                                        <a href="{{val.link}}" target="_blank" class="download">下载</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

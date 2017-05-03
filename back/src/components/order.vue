@@ -2,7 +2,7 @@
     <div>
         <el-table :data="orders"
                   style="width: 100%">
-            <el-table-column prop="_id"
+            <el-table-column prop="orderId"
                              label="订单编号">
             </el-table-column>
             <el-table-column label="下单时间" width='150px'>
@@ -26,8 +26,11 @@
                     <span v-text="scope.row.buyer.phone"></span>
                 </template>
             </el-table-column>
-            <el-table-column prop="totalPrice" width='100px'
+            <el-table-column width='100px'
                              label="订单总价">
+                <template scope="scope">
+                    ￥<span>{{(scope.row.totalPrice/100).toFixed(2)}}</span>
+                </template>
             </el-table-column>
             <el-table-column label="状态" width='80px'>
                 <template scope="scope">
@@ -53,7 +56,6 @@
     </div>
 </template>
 <script>
-let host='https://chip.jymao.com'
 export default{
     data(){
         return{
@@ -64,7 +66,7 @@ export default{
         write(index){
             if(!this.orders[index].express.name || !this.orders[index].express.id ) return;
             let self=this;
-            this.$http.post(host+'/ds/order/expressed',{
+            this.$http.post(this.$host+'/ds/order/expressed',{
                 ownerOpenId:self.orders[index].ownerOpenId,
                 orderId:self.orders[index]._id,
                 express:{
@@ -80,7 +82,7 @@ export default{
         },
         getOrder(){
             let self=this;
-            this.$http.get(host+'/ds/g/Order').then( (obj) => {
+            this.$http.get(this.$host+'/ds/g/Order').then( (obj) => {
                 self.orders=obj.data;
                 for(let i=0;i<self.orders.length;i++){
                     if(self.orders[i].status == 'paid'){
@@ -93,7 +95,7 @@ export default{
     mounted () {
         let self=this;
         //改为已付款
-        // this.$http.post(host+'/ds/order/paid',{
+        // this.$http.post(this.$host+'/ds/order/paid',{
         //     ownerOpenId:'oHqoBw4UjbflLS0G3S_IceUPznwU',
         //     orderId:'58ef99afa5d0092e76e6d054'
         // }).then((obj)=>{
