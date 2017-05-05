@@ -222,17 +222,19 @@ app.factory('searchByName', ['$http', 'host','$filter','dailog', function($http,
         changePrice:function(data){
             for (var i = 0; i < data.length; i++) {
                 for (var j = 0; j < data[i].parts.length; j++) {
-                    for (var k = 0; k < data[i].parts[j].prices.length; k++) {
-                        data[i].parts[j].prices[k].changePrice=$filter('changRate')(data[i].parts[j].prices[k].price,data[i].parts[j].prices[k].currency); 
-                        if (data[i].name=='ic购商城') {
-                            data[i].parts[j].prices[k].changePrice = (data[i].parts[j].prices[k].changePrice * 0.95).toFixed(2);
+                    if(data[i].parts[j].prices){
+                        for (var k = 0; k < data[i].parts[j].prices.length; k++) {
+                            data[i].parts[j].prices[k].changePrice=$filter('changRate')(data[i].parts[j].prices[k].price,data[i].parts[j].prices[k].currency); 
+                            if (data[i].name=='ic购商城') {
+                                data[i].parts[j].prices[k].changePrice = (data[i].parts[j].prices[k].changePrice * 0.95).toFixed(2);
 
+                            }
+                            if (k==0) {
+                                data[i].parts[j].prices[k].selected=true;
+                            }else{
+                                data[i].parts[j].prices[k].selected=false;
+                            }                 
                         }
-                        if (k==0) {
-                            data[i].parts[j].prices[k].selected=true;
-                        }else{
-                            data[i].parts[j].prices[k].selected=false;
-                        }                 
                     }
                 }
             }
@@ -486,6 +488,18 @@ noncestr
 ts
 url (这个得调用encodeURIComponent()
  */
+
+/*给订单加了个新状态 not-approved
+初始not-approved => not-paid => paid => expressed
+
+新接口:
+POST /ds/order/approved
+{
+orderId:***,
+ownerOrderId:***
+}
+将订单状态设置为审核通过*/
+
 
 /*
 var menu = {

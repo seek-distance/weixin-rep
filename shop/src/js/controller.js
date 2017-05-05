@@ -156,7 +156,7 @@ app.controller('orderManage', ['$scope','order','weixin','$state','dailog', func
 	}
 }]);
 
-app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder','cart', function($scope,$rootScope,weixin,dailog,checkOrder,cart){
+app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder','cart','$state', function($scope,$rootScope,weixin,dailog,checkOrder,cart,$state){
     weixin.config();
 	$scope.shopPrice=function(){
 		var sum=0;
@@ -190,8 +190,7 @@ app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrde
 		}).then(function(obj){
 			dailog.hideLoad();
             cart.removeSelected();
-            var orderId=obj.data.orderId;
-			weixin.pay(orderId);
+            $state.go('order');
 		})
 	}
 
@@ -311,7 +310,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
                     for (var i = 0; i < data[j].icKeys.length; i++) {
                         if(data[j].icKeys[i].name=='云汉芯城'){
                             data[j].icKeys[i].name='ic购商城';
-                            data[j].distributors.push(data[j].icKeys[i]);
+                            data[j].distributors.splice(0,0,data[j].icKeys[i]);
                         }
                     }
                     var key=0;
@@ -329,9 +328,8 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
                     };
                     $scope.lists.push(item);
                 }
-                console.log($scope.lists);
             }
-					
+			console.log($scope.lists)		
 		});
 	};
 
@@ -364,6 +362,10 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 		}
 		return {msg:false};
 	}
+
+    $scope.showItem=function(index){
+        $scope.lists[index].show=!$scope.lists[index].show;
+    }
 
 }]);
 

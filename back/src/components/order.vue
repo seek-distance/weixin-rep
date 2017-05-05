@@ -32,8 +32,12 @@
                     ￥<span>{{(scope.row.totalPrice/100).toFixed(2)}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="状态" width='80px'>
+            <el-table-column label="状态" align='center'>
                 <template scope="scope">
+                    <div v-if="scope.row.status == 'not-approved'">
+                        <p>待审核</p>
+                        <el-button @click="passApprove(scope.$index)" class="btn btn-info">通过审核</el-button>
+                    </div>
                     <span v-if="scope.row.status == 'not-paid'">未付款</span>
 	                <span v-if="scope.row.status == 'paid'">已付款</span>
 	                <span v-if="scope.row.status == 'expressed'">已发货</span>
@@ -89,6 +93,15 @@ export default{
                         self.orders[i].express={name:'',id:''};
                     }
                 }
+            })
+        },
+        passApprove(index){
+            let self=this;
+            this.$http.post(this.$host+'/ds/order/approved',{
+                ownerOpenId:self.orders[index].ownerOpenId,
+                orderId:self.orders[index].orderId,
+            }).then((obj)=>{
+                this.getOrder();
             })
         }
     },

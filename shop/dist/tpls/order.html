@@ -75,6 +75,7 @@
 												<span class="goods_amount">总价：¥ {{value.totalPrice/100}}</span>
 												<span class="order_type">
 													状态：
+													<span ng-if="value.status == 'not-approved'">待审核</span>
 													<span ng-if="value.status == 'not-paid'">未付款</span>
 													<span ng-if="value.status == 'paid'">已付款</span>
 													<span ng-if="value.status == 'expressed'">已发货</span>
@@ -120,6 +121,7 @@
 		总价：{{currentShop.totalPrice/100}} &nbsp;&nbsp;&nbsp;
 		<span class="order_type">
 			状态：
+			<span ng-if="currentShop.status == 'not-approved'">待审核</span>
 			<span ng-if="currentShop.status == 'not-paid'">未付款</span>
 			<span ng-if="currentShop.status == 'paid'">已付款</span>
 			<span ng-if="currentShop.status == 'expressed'">已发货</span>
