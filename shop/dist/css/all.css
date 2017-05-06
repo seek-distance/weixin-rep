@@ -447,7 +447,6 @@ embed {
       display: block; }
   .search .lists > .name {
     font-size: 0.35rem;
-    height: 1rem;
     line-height: 1rem; }
   .search .lists ul {
     margin: 0 10px;

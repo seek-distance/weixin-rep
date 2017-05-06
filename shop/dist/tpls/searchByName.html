@@ -11,7 +11,7 @@
         <div class="lists" ng-repeat="(index,va) in lists">
             <div class="name" ng-click='showItem(index)'>
                 <i class="fa fa-microchip"></i>
-                <span ng-bind="va.name"></span>
+                <span ng-repeat="(j,vv) in va.name track by j" ng-bind="vv" ng-class="{'text-danger':j==1}"></span>
                 <span class="pull-right">
                     <i ng-show="!va.show" class="fa fa-plus" aria-hidden="true"></i>
                     <i ng-show="va.show" class="fa fa-times" aria-hidden="true"></i>
@@ -59,7 +59,7 @@
         <p class="text-success text-center">加入成功</p>
         <div>
             <a ui-sref="cart" class="btn btn-success">前往购物车</a>
-            <button ng-touch="closeFix()" class="btn btn-success">继续选购</button>
+            <button ng-click="closeFix()" class="btn btn-success">继续选购</button>
         </div>
     </div>
 </div>

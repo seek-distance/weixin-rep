@@ -2,8 +2,7 @@
     <div>
         <el-table :data="orders"
                   style="width: 100%">
-            <el-table-column prop="orderId"
-                             label="订单编号">
+            <el-table-column prop="orderId" label="订单编号">
             </el-table-column>
             <el-table-column label="下单时间" width='150px'>
                 <template scope="scope">
@@ -57,6 +56,7 @@
                 </template>
             </el-table-column>
         </el-table>
+        <div @click='getMore' class="more">更多....</div>
     </div>
 </template>
 <script>
@@ -84,15 +84,31 @@ export default{
                 }
             })
         },
-        getOrder(){
+        getOrder(olderThan){
             let self=this;
-            this.$http.get(this.$host+'/ds/g/Order').then( (obj) => {
-                self.orders=obj.data;
-                for(let i=0;i<self.orders.length;i++){
-                    if(self.orders[i].status == 'paid'){
-                        self.orders[i].express={name:'',id:''};
+            let url = this.$host+'/ds/g/Order';
+            if(olderThan)   url += '?olderThan='+olderThan;
+            this.$http.get(url).then( (obj) => {
+                for(let i=0;i<obj.data.length;i++){
+                    if(obj.data[i].status == 'paid'){
+                        obj.data[i].express={name:'',id:''};
                     }
                 }
+                let order=[];
+                if(self.orders.length!=0){
+                    order=obj.data.slice(1);
+                }else{
+                    order=obj.data;
+                } 
+                console.log(order);
+                if(order.length==0){
+                    self.$notify({
+                        title: '警告',
+                        message: '没有更多订单了',
+                        type: 'warning'
+                    });
+                }
+                self.orders = self.orders.concat(order);
             })
         },
         passApprove(index){
@@ -101,8 +117,20 @@ export default{
                 ownerOpenId:self.orders[index].ownerOpenId,
                 orderId:self.orders[index].orderId,
             }).then((obj)=>{
-                this.getOrder();
+                self.$http.get(this.$host+'/ds/g/Order').then( (obj) => {
+                    for(let i=0;i<obj.data.length;i++){
+                        if(obj.data[i].status == 'paid'){
+                            obj.data[i].express={name:'',id:''};
+                        }
+                    }
+                    self.orders = obj.data;
+                    console.log(self.orders);
+                })
             })
+        },
+        getMore(){
+            let olderThan=this.orders[this.orders.length-1].createdAt;
+            this.getOrder(olderThan);
         }
     },
     mounted () {
@@ -140,6 +168,14 @@ export default{
         border-radius: 3px;
         color:#fff;
         cursor: pointer;
+    }
+    .more{
+        text-align: center;
+        cursor:pointer;
+        padding-top: 15px;
+        line-height: 30px;
+        font-size: 18px;
+        color:#97a8be;
     }
 </style>
 

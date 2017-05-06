@@ -117,7 +117,10 @@
                 </div>
                 <div class="ui-box">
                     <div class="b71 ui-box-flex"><span>共<span ng-bind="totalNum"></span>件 合计: </span><strong ng-bind="shopTotalPrice.toFixed(2)"></strong></div>
-                    <div class="b72 ui-box-flex"><a ng-touch='pay()' class="ui-button"><span>去付款</span></a>
+                    <div class="b72 ui-box-flex">
+                        <a ng-touch='pay()' class="ui-button">
+                            <span>提交</span>
+                        </a>
                     </div>
                 </div>
             </div>

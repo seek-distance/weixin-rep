@@ -94,11 +94,6 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		templateUrl:'dist/tpls/order.html',
 		controller:'order'
 	})
-	.state('orderManage',{
-		url:'/orderManage',
-		templateUrl:'dist/tpls/orderManage.html',
-		controller:'orderManage'
-	})
 	.state('checkOrder',{
 		url:'/checkOrder',
 		templateUrl:'dist/tpls/checkOrder.html',

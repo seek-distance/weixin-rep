@@ -31,9 +31,6 @@ app.controller('cart', ['$scope','cart','weixin','$rootScope','$state','$timeout
 		$scope.totalNum=cart.totalNum($scope.shops);
 		weixin.setUserInfo('cart',$scope.shops);
 	}
-    $timeout(function(){
-        $scope.reload();
-    },300);
 
 	$scope.addNum=function(i){
 		$scope.shops[i].num++;
@@ -86,7 +83,11 @@ app.controller('cart', ['$scope','cart','weixin','$rootScope','$state','$timeout
 		$rootScope.selectShop=cart.findSelected($scope.shops);
 		$state.go('checkOrder');
 	}
-
+    
+    $scope.reload();
+    for(var i=0;i<$scope.shops.length;i++){
+        $scope.changeNum(i);
+    }
 }]);
 
 app.controller('order', ['$scope','order','weixin','$state','dailog', function($scope,order,weixin,$state,dailog){
@@ -95,8 +96,9 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
 		dailog.hideLoad();
 		$scope.orders=obj.data;		
 	})
-	$scope.current=false;
+	$scope.current=false;    
 	$scope.showCurrent=function(key){
+        $scope.scrollTop=document.body.scrollTop;
 		$scope.currentShop = $scope.orders[key];
 		$scope.current=true;
 	};
@@ -104,6 +106,7 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
 		setTimeout(function(){
 			$scope.current=false;
 			$scope.$apply();
+            document.body.scrollTop=$scope.scrollTop;
 		},300)		
 	}
 	$scope.goback=function(){
@@ -113,47 +116,6 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
         e.stopPropagation();
         weixin.pay(orderId);
     }
-}]);
-
-app.controller('orderManage', ['$scope','order','weixin','$state','dailog', function($scope,order,weixin,$state,dailog){
-	order.getOrders().then(function(obj){
-		$scope.orders=obj.data;	
-	})
-	$scope.current=false;
-	$scope.name='';
-	$scope.id='';
-	$scope.showCurrent=function(key){
-		$scope.currentShop = $scope.orders[key];
-		$scope.current=true;
-	};
-	$scope.hideCurrent=function(){
-		setTimeout(function(){
-			$scope.current=false;
-			$scope.$apply();
-		},300)		
-	}
-	$scope.goback=function(){
-		$state.go(-1);
-	}
-	$scope.write=function(){
-		order.expressed({
-			ownerOpenId:$scope.current.ownerOpenId,
-			orderId:weixin.getUserInfo().openId,
-			express:{
-			    name:$scope.name,
-			    id:$scope.id
-			}
-		}).then(function(obj){
-			dailog.hideLoad();
-			var data=obj.data;
-			if (data.msg=='ok') {
-				dailog.show();
-			}
-		})
-	}
-	$scope.closeFix=function(){
-		$state.go('orderManage');
-	}
 }]);
 
 app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder','cart','$state', function($scope,$rootScope,weixin,dailog,checkOrder,cart,$state){
@@ -288,55 +250,16 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 			return;
 		}
 		searchByName.search({part:encodeURIComponent($scope.searchName)}).success(function(data){
-            $scope.lists=[];
             dailog.hideLoad();
-            var flag=false;
-            if (data.msg=='not found') {
-                $scope.showList = false;
-                $scope.noList=true;
-                return;
-            }
-            for(var j=0;j<data.length;j++){
-                if (!data[j].distributors || data[j].distributors.length == 0 && data[j].icKeys.length == 0) {
-                    if(!flag){
-                        $scope.showList = false;
-                        $scope.noList=true;
-                    }                    
-                    continue;
-                }else{
-                    flag=true;
-                    $scope.noList=false;
-                    $scope.showList = true;
-                    for (var i = 0; i < data[j].icKeys.length; i++) {
-                        if(data[j].icKeys[i].name=='云汉芯城'){
-                            data[j].icKeys[i].name='ic购商城';
-                            data[j].distributors.splice(0,0,data[j].icKeys[i]);
-                        }
-                    }
-                    var key=0;
-                    while (data[j].distributors.length<3) {
-                        if (!data[j].icKeys[key])	break;
-                        if (!searchByName.hasItem(data[j].distributors,data[j].icKeys[key])) {
-                            data[j].distributors.push(data[j].icKeys[key]);
-                        }
-                        key++;
-                        if(key>10)  break;					
-                    }
-                    var item={
-                        list:searchByName.changePrice(data[j].distributors),
-                        name:data[j].name
-                    };
-                    $scope.lists.push(item);
-                }
-            }
-			console.log($scope.lists)		
+            $scope.lists=$scope.getLists(data);
+            console.log($scope.lists)
 		});
 	};
 
 	$scope.addToCart=function(index,firstKey,secondKey){
 		var data = $scope.lists[index].list[firstKey].parts[secondKey];
 		data.name=$scope.lists[index].list[firstKey].name;
-		data.shopName=$scope.lists[index].name;
+		data.shopName=$scope.lists[index].oldName;
 		data.singlePrice=data.prices[0].changePrice;
 		data.selected=true;
 		var cart=weixin.getUserInfo().cart;
@@ -365,6 +288,58 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 
     $scope.showItem=function(index){
         $scope.lists[index].show=!$scope.lists[index].show;
+    }
+    
+    $scope.getLists=function(data){
+        var lists=[];            
+        var flag=false;
+        if (data.msg=='not found') {
+            $scope.showList = false;
+            $scope.noList=true;
+            return;
+        }
+        for(var j=0;j<data.length;j++){
+            if (!data[j].distributors || data[j].distributors.length == 0 && data[j].icKeys.length == 0) {
+                if(!flag){
+                    $scope.showList = false;
+                    $scope.noList=true;
+                }                    
+                continue;
+            }else{
+                flag=true;
+                $scope.noList=false;
+                $scope.showList = true;
+                for (var i = 0; i < data[j].icKeys.length; i++) {
+                    if(data[j].icKeys[i].name=='云汉芯城'){
+                        data[j].icKeys[i].name='ic购商城';
+                        data[j].distributors.splice(0,0,data[j].icKeys[i]);
+                    }
+                }
+                var key=0;
+                while (data[j].distributors.length<3) {
+                    if (!data[j].icKeys[key])	break;
+                    if (!searchByName.hasItem(data[j].distributors,data[j].icKeys[key])) {
+                        data[j].distributors.push(data[j].icKeys[key]);
+                    }
+                    key++;
+                    if(key>10)  break;					
+                }
+
+                var start = data[j].name.indexOf($scope.searchName);
+                var end = start + $scope.searchName.length;
+                var firstName = data[j].name.slice(0,start);
+                var secondName = data[j].name.slice(start,end);
+                var lastName = data[j].name.slice(end);
+
+                var item={
+                    list:searchByName.changePrice(data[j].distributors),
+                    name:[firstName,secondName,lastName],
+                    oldName:data[j].name
+                };
+                lists.push(item);
+            }
+        }
+        return lists;
     }
 
 }]);

@@ -72,7 +72,7 @@
 									            </div>
 											</dd>
 											<dd class="clearfix" style="line-height:33px"> 
-												<span class="goods_amount">总价：¥ {{value.totalPrice/100}}</span>
+												<span class="goods_amount">总价：¥ {{(value.totalPrice/100).toFixed(2)}}</span>
 												<span class="order_type">
 													状态：
 													<span ng-if="value.status == 'not-approved'">待审核</span>
@@ -118,7 +118,7 @@
         </div>
 	</div>
 	<p>
-		总价：{{currentShop.totalPrice/100}} &nbsp;&nbsp;&nbsp;
+		总价：{{(currentShop.totalPrice/100).toFixed(2)}} &nbsp;&nbsp;&nbsp;
 		<span class="order_type">
 			状态：
 			<span ng-if="currentShop.status == 'not-approved'">待审核</span>
