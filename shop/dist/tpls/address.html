@@ -25,13 +25,15 @@
                 <div class="box box_01">
                     <div class="list_nav list_address">
                         <ul>
-                            <li ng-touch='changeAddress(key)' ng-repeat="(key, value) in address">
-                                <div class="items">
-                                    <a class="lnk">
+                            <li class="clearfix" ng-repeat="(key, value) in address" style="margin-bottom:5px;padding-bottom:5px">
+                                <div ng-click='changeAddress(key)' class="items">
+                                    <a class="lnk" style="background-image:none;text-decoration:none">
                                         <div ng-bind="value.addr" class="address_info"></div>
                                         <div class="address_detail">{{value.name}}  {{value.phone}}</div>
                                     </a>
                                 </div>
+                                <a ng-click='changeAddress(key)' class="pull-left btn btn-success" style="width:48%;margin:0 1%">选择</a>
+                                <a ui-sref='address_change({_id:value._id})' class="pull-left btn btn-warning" style="width:48%">修改</a>
                             </li>
                         </ul>
                     </div>

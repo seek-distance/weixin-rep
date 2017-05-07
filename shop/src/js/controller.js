@@ -197,14 +197,12 @@ app.controller('address', ['$scope','weixin','$rootScope','$state','dailog', fun
 
 	$scope.changeAddress=function(index){
 		$rootScope.currentAddr=$scope.address[index];
-		setTimeout(function(){
-			$state.go('checkOrder');
-		},300)
+		$state.go('checkOrder');
 		
 	}
 }]);
 
-app.controller('address_add', ['$scope','address_add','weixin','dailog', function($scope,addressAdd,weixin,dailog){
+app.controller('address_add', ['$scope','address','weixin','dailog', function($scope,addressAdd,weixin,dailog){
 	//$scope.provinceList=['请选择省','北京','天津'];
 	$scope.tel='';
 	$scope.name='';
@@ -231,6 +229,44 @@ app.controller('address_add', ['$scope','address_add','weixin','dailog', functio
 			}
 		})
 	}
+}]);
+
+app.controller('address_change', ['$scope','weixin','dailog','$stateParams','address','$state', function($scope,weixin,dailog,$stateParams,address,$state){
+	var openId=weixin.getUserInfo().openId;
+
+	weixin.getMessage(openId).then(function(obj){
+		dailog.hideLoad();
+		for(var i=0;i<obj.data[0].receiveAddrs.length;i++){
+            if(obj.data[0].receiveAddrs[i]._id==$stateParams._id){
+                $scope.address=obj.data[0].receiveAddrs[i];
+            }
+        }
+	})
+
+    $scope.submit=function(){
+		address.submit({
+			openId:weixin.getUserInfo().openId,
+			receiveAddr:{
+                '_id':$stateParams._id,
+				'phone':$scope.address.phone,
+				'name':$scope.address.name,
+				'addr':$scope.address.addr,
+				'zipCode':$scope.address.zipCode
+			}
+		}).then(function(obj){
+			dailog.hideLoad();
+			var data=obj.data;
+			if (data.msg == 'ok') {
+				dailog.show('修改成功');
+			}
+		})
+	}
+
+    $scope.closeFix=function(){
+		dailog.hide();
+        $state.go('address');
+	}
+
 }]);
 
 app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','dailog', function($scope,searchByName,$rootScope,weixin,dailog){
@@ -316,25 +352,26 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
                     }
                 }
                 var key=0;
-                while (data[j].distributors.length<3) {
+                while (/*data[j].distributors.length<3*/data[j].icKeys[key]) {
                     if (!data[j].icKeys[key])	break;
                     if (!searchByName.hasItem(data[j].distributors,data[j].icKeys[key])) {
                         data[j].distributors.push(data[j].icKeys[key]);
                     }
                     key++;
-                    if(key>10)  break;					
+                    /*if(key>10)  break;*/					
                 }
 
-                var start = data[j].name.indexOf($scope.searchName);
+                var oldName = data[j].name;
+                var start = data[j].name.toUpperCase().indexOf($scope.searchName.toUpperCase());
                 var end = start + $scope.searchName.length;
-                var firstName = data[j].name.slice(0,start);
-                var secondName = data[j].name.slice(start,end);
-                var lastName = data[j].name.slice(end);
+                var firstName = oldName.slice(0,start);
+                var secondName = oldName.slice(start,end);
+                var lastName = oldName.slice(end);
 
                 var item={
                     list:searchByName.changePrice(data[j].distributors),
                     name:[firstName,secondName,lastName],
-                    oldName:data[j].name
+                    oldName:oldName
                 };
                 lists.push(item);
             }

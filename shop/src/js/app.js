@@ -109,6 +109,11 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		templateUrl:'dist/tpls/address_add.html',
 		controller:'address_add'
 	})
+	.state('address_change',{
+		url:'/address_change?_id',
+		templateUrl:'dist/tpls/address_change.html',
+		controller:'address_change'
+	})
 	.state('searchByName',{
 		url:'/search-by-name',
 		templateUrl:'dist/tpls/searchByName.html',

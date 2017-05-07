@@ -222,6 +222,9 @@ app.factory('searchByName', ['$http', 'host','$filter','dailog', function($http,
         changePrice:function(data){
             for (var i = 0; i < data.length; i++) {
                 for (var j = 0; j < data[i].parts.length; j++) {
+                    if(data[i].parts[j].stock){
+                        data[i].parts[j].stock=parseInt(data[i].parts[j].stock);
+                    }
                     if(data[i].parts[j].prices){
                         for (var k = 0; k < data[i].parts[j].prices.length; k++) {
                             data[i].parts[j].prices[k].changePrice=$filter('changRate')(data[i].parts[j].prices[k].price,data[i].parts[j].prices[k].currency); 
@@ -281,7 +284,7 @@ app.factory('contact', ['$http', 'host','dailog', function($http, host,dailog) {
     };
 }]);
 
-app.factory('address_add', ['$http', 'host','dailog', function($http, host,dailog) {
+app.factory('address', ['$http', 'host','dailog', function($http, host,dailog) {
     return {
         submit: function(option) {
             dailog.showLoad();
@@ -407,7 +410,7 @@ phone:****
 */
 
 /*
-接口: 添加/更新地址
+接口: 添加地址
 POST /ds/wx-user/receive-addr
 {
 openId:****,
@@ -419,6 +422,13 @@ zipCode:****
 }
 }
 */
+
+/*
+更新地址
+POST chip.jymao.com/ds/wx-user/receive-addr
+如果 receiveAddr里包含了一个 _id 参数, 那么 就会修改该_id对应的地址
+*/
+
 
 /*
 获取微信用户信息:
@@ -447,6 +457,10 @@ POST /ds/order
     descr: 订单描述 (譬如部件名之类的信息)
 }
 返回一个 orderId:
+
+POST /ds/order
+如果里面有参数 orderId, 就用传入的信息 修改该order
+
 */
 
 /*
