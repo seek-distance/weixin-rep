@@ -63,10 +63,10 @@ export default {
     },
     mounted () {
         if(this.$route.path == '/'){
-            router.push('order');
+            router.replace('order');
         }
         if(!sessionStorage.getItem('username')){
-            router.push('/login/log')
+            router.replace('/login/log')
         }
     }
 }
@@ -80,7 +80,7 @@ $background:#1c2b36;
 }
 .leftnav {
     background: $background;
-    width: 20%;
+    width: 15%;
     position: fixed;
     left:0;
     bottom:0;
@@ -111,7 +111,7 @@ $background:#1c2b36;
     }
 }
 .content{
-    padding-left:21%; 
+    padding-left:16%; 
     padding-top: 60px;
     .el-breadcrumb{
         font-size: 17px;

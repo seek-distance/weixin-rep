@@ -154,17 +154,6 @@ app.factory('weixin', ['appId', 'host','$http','dailog','$state','$timeout', fun
     }
 }])
 
-app.factory('swipe', [function() {
-    return function() {
-        setTimeout(function() {
-            var mySwiper = new Swiper('.swiper-container', {
-                loop: true,
-                pagination: '.swiper-pagination',
-            });
-        }, 10);
-    };
-}]);
-
 app.factory('cart', ['weixin',function(weixin) {
     return {
         totalPrice:function(data){

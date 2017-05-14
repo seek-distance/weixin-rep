@@ -103,11 +103,9 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
 		$scope.current=true;
 	};
 	$scope.hideCurrent=function(){
-		setTimeout(function(){
-			$scope.current=false;
-			$scope.$apply();
-            document.body.scrollTop=$scope.scrollTop;
-		},300)		
+        $scope.current=false;
+        $scope.$apply();
+        document.body.scrollTop=$scope.scrollTop;		
 	}
 	$scope.goback=function(){
 		$state.go(-1);
@@ -308,9 +306,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
 			cart.push(data);
 		}
 		weixin.setUserInfo('cart',cart);
-		setTimeout(function(){
-			dailog.show();
-		},300)		
+		dailog.show();	
 	}
 
 	$scope.hasShop=function(maker,name){

@@ -55,8 +55,53 @@
                     </div>
                 </template>
             </el-table-column>
+            <el-table-column label="操作">
+                <template scope="scope">
+                    <el-button @click='changeOrder(scope.$index)' type='warning'>修改</el-button>
+                </template>
+            </el-table-column>
         </el-table>
+        
         <div @click='getMore' class="more">更多....</div>
+
+        <el-dialog title="修改信息" v-show="dialog">
+            <el-form slot="title" v-if="dialog" :label-position="labelPosition" label-width="80px" :model="changeFrom">
+                <p>修改信息</p>
+                <el-form-item label="收货地址">
+                    <el-input v-model="changeFrom.buyer.addr"></el-input>
+                </el-form-item>
+                <el-form-item label="收货人">
+                    <el-input v-model="changeFrom.buyer.name"></el-input>
+                </el-form-item>
+                <el-form-item label="收货号码">
+                    <el-input v-model="changeFrom.buyer.phone"></el-input>
+                </el-form-item>
+                <el-form-item label="订单总价">
+                    <el-input v-model="changeFrom.totalPrice"></el-input>
+                </el-form-item>
+                <div v-for='(item,key) in changeFrom.subOrders'>
+                    <span>{{item.partName}}</span>
+                    <el-form-item label="数量">
+                        <el-input v-model="item.qty"></el-input>
+                    </el-form-item>
+                    <el-form-item label="单价">
+                        <el-input v-model="item.price"></el-input>
+                    </el-form-item>
+                </div>
+                <div v-if="changeFrom.express">
+                    <el-form-item label="快递公司">
+                        <el-input v-model="changeFrom.express.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="快递单号">
+                        <el-input v-model="changeFrom.express.id"></el-input>
+                    </el-form-item>
+                </div>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialog = false">取 消</el-button>
+                <el-button type="primary" @click="change()">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -64,6 +109,9 @@ export default{
     data(){
         return{
             orders:[],
+            dialog:false,
+            labelPosition: 'right',
+            changeFrom: {}
         }
     },
     methods: {
@@ -80,7 +128,12 @@ export default{
             }).then((obj)=>{
                 let data=obj.data;
                 if(obj.data.msg=='ok'){
-                    self.getOrder();
+                    this.$notify({
+                        title: '成功',
+                        message: '物流填写成功',
+                        type: 'success'
+                    });
+                    this.reloadOrder();
                 }
             })
         },
@@ -95,12 +148,11 @@ export default{
                     }
                 }
                 let order=[];
-                if(self.orders.length!=0){
+                if(self.orders.length!=0 && olderThan){
                     order=obj.data.slice(1);
                 }else{
                     order=obj.data;
                 } 
-                console.log(order);
                 if(order.length==0){
                     self.$notify({
                         title: '警告',
@@ -111,26 +163,44 @@ export default{
                 self.orders = self.orders.concat(order);
             })
         },
+        reloadOrder(){
+            var self=this;
+            self.$http.get(this.$host+'/ds/g/Order').then( (obj) => {
+                for(let i=0;i<obj.data.length;i++){
+                    if(obj.data[i].status == 'paid'){
+                        obj.data[i].express={name:'',id:''};
+                    }
+                }
+                self.orders = obj.data;
+            })
+        },
         passApprove(index){
             let self=this;
             this.$http.post(this.$host+'/ds/order/approved',{
                 ownerOpenId:self.orders[index].ownerOpenId,
                 orderId:self.orders[index].orderId,
             }).then((obj)=>{
-                self.$http.get(this.$host+'/ds/g/Order').then( (obj) => {
-                    for(let i=0;i<obj.data.length;i++){
-                        if(obj.data[i].status == 'paid'){
-                            obj.data[i].express={name:'',id:''};
-                        }
-                    }
-                    self.orders = obj.data;
-                    console.log(self.orders);
-                })
+                self.reloadOrder();
             })
         },
         getMore(){
             let olderThan=this.orders[this.orders.length-1].createdAt;
             this.getOrder(olderThan);
+        },
+        changeOrder(i){
+            this.changeFrom=JSON.parse(JSON.stringify(this.orders[i]));
+            this.changeFrom.totalPrice=(this.changeFrom.totalPrice/100).toFixed(2);
+            this.dialog=true;
+            console.log(this.changeFrom)
+        },
+        change(){
+            var self=this;
+            this.changeFrom.totalPrice *= 100;
+            this.$http.post(this.$host+'/ds/order',this.changeFrom).then((obj)=>{
+                console.log(obj);
+                this.dialog=false;
+                self.reloadOrder();
+            })            
         }
     },
     mounted () {
@@ -142,7 +212,7 @@ export default{
         // }).then((obj)=>{
         //     console.log(obj);
         // })
-        this.getOrder();
+        this.reloadOrder();
     }
 }
 </script>
@@ -176,6 +246,16 @@ export default{
         line-height: 30px;
         font-size: 18px;
         color:#97a8be;
+    }
+    .el-form {
+        p{
+            font-size: 25px;
+            line-height: 60px;
+            text-align: center;
+        }
+        span{
+            font-size: 16px;
+        }
     }
 </style>
 

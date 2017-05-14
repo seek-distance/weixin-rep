@@ -75,6 +75,13 @@ input {
 **	自适应样式单
 */
 
+/* 820+ */
+@media only screen and (min-width:800px) {
+	.bottom-submit,.page-order-checkout-wrap .b7,.app #contact{
+        width: 600px;
+        margin: 0 auto;
+    }
+}
 
 /* 720+ */
 
@@ -217,6 +224,11 @@ input {
 	body {
 		font-size: 8.33333px;
 	}
+}
+
+.ui-button,.btn a{
+    cursor: pointer;
+    text-decoration: none!important;
 }
 
 .main {
@@ -370,6 +382,10 @@ embed {
     width: 100%;
     display: none;
     background: rgba(255, 255, 255, 0.5) url('../images/load.gif') no-repeat center center;
+}
+
+#OrderList li,.back,.home{
+    cursor: pointer;
 }
 
 #contact {
