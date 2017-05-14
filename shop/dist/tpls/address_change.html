@@ -1,0 +1,86 @@
+<div style="display: block; background: rgb(235, 236, 237);">
+    <div id="Cheader">
+        <div id="header" class="header_03">
+            <div class="back">
+                <a ui-sref='home' class="arrow">首页</a>
+            </div>
+            <div class="tit">
+                <h3 style="line-height: 2.8em;">修改地址</h3>
+            </div>
+            <div class="nav">
+                <ul>
+                    <li class="cart">
+                        <a ui-sref='cart'>购物车</a>
+                        <span id="ShoppingCartNum" style="display: none;"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="wrapper" class="xm_app">
+        <div id="viewport" class="viewport" style="background: transparent;">
+            <div class="address_add mlr20 ">
+                <form name='addressForm'>   
+                    <div class="box box_01">
+                        <div class="title">
+                            <h3>收货人姓名</h3> 
+                        </div>
+                        <div class="input">
+                            <input type="text" ng-model='address.name' placeholder="请填写真实姓名" id="consignee" required ng-maxlength="15"> 
+                        </div>
+                    </div>
+                    <div class="box box_02">
+                        <div class="title">
+                            <h3>收货地址</h3> 
+                        </div>
+                        <div class="box_02_03">
+                            <div class="textarea">
+                                <textarea ng-model='address.addr' name="address" placeholder="请输入收货地址，不得少于20字" required id="address" ng-minlength='10' ng-maxlength="120"></textarea>
+                            </div>
+                            <div class="error_tips">
+                                <p ng-show="addressForm.address.$touched && addressForm.address.$invalid">请输入正确的收货地址，不得少于10字</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box box_03">
+                        <div class="title">
+                            <h3>邮政编码</h3> 
+                        </div>
+                        <div class="input">
+                            <input ng-model='address.zipCode' name="zipcode" placeholder="邮政编码,为6位数字" id="zipcode" type="text" required ng-pattern="/^[1-9][0-9]{5}$/"> 
+                        </div>
+                        <div class="error_tips">
+                            <p ng-show="addressForm.zipcode.$touched && addressForm.zipcode.$invalid">
+                                请输入正确的6位邮编
+                            </p>
+                        </div>
+                    </div>
+                    <div class="box box_04">
+                        <div class="title">
+                            <h3>手机号码</h3> 
+                        </div>
+                        <div class="input">
+                            <input ng-model='address.phone' name="tel" placeholder="联系人电话，11位数字" id="tel" type="text" ng-pattern='/^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9])[0-9]{8}$/' required> 
+                        </div>
+                        <div class="error_tips">
+                            <p ng-show="addressForm.tel.$touched && addressForm.tel.$invalid">
+                                请输入正确的11位手机
+                            </p>
+                        </div>
+                    </div>
+                    <div class="box box_05">
+                        <a id="AddressAddBtn" ng-touch='submit()' type="submit" ng-disabled="addressForm.$invalid" class="btn btn-success">确认修改</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="message">
+    <div class="content">
+        <p class="text-success text-center">897</p>
+        <div>
+            <button ng-click="closeFix()" class="btn btn-success">确定</button>
+        </div>
+    </div>      
+</div>

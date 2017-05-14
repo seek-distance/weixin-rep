@@ -28,7 +28,7 @@ app.factory('dailog', ['$state', function($state) {
 
 app.factory('weixin', ['appId', 'host','$http','dailog','$state','$timeout', function(appId, host,$http,dailog,$state,$timeout) {
     return {
-        url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appId=' + appId + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
+        url: 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appId + '&redirect_uri=' + encodeURIComponent(window.location.href) + '&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect',
         isweixin: function() {
             var ua = window.navigator.userAgent.toLowerCase();
             if (ua.match(/MicroMessenger/i) == 'micromessenger') {
