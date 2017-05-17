@@ -22,3 +22,6 @@ body{color:#666;background-color:#fff;font:12px/1.5 "微软雅黑",tahoma,arial,
 .content .el-dialog .el-dialog__headerbtn{
     display: none!important;
 }
+body .el-tooltip__popper.is-dark{
+    display:none!important;
+}

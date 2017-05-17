@@ -44,12 +44,12 @@
 			<div class="box">
 				<div class="list_order list_order_tmp list_nav">
 					<ul id="OrderList">
-						<li ng-repeat="(key, value) in orders" ng-click='showCurrent(key)' style="margin-bottom: 5px;">
-							<div class="order items" style="height: auto;padding-right: 10px;">
+						<li ng-repeat="(key, value) in orders" style="margin-bottom: 5px;">
+							<div ng-click='showCurrent(key)' class="order items" style="height: auto;padding-right: 10px;">
 								<a class="lnk" style="text-decoration:none">
 									<div class="order_info" style="padding-top: 8px">
 										<dl> 
-											<dt class="add_time">订单日期：{{value.createdAt.slice(0,10)}} </dt>
+											<dt class="add_time">订单日期：{{value.createdAt.slice(0,10)}} <span class="pull-right text-warning">收货地址</span></dt>
 											<dd class="order_id">订单编号：{{value._id}}</dd>
 											<dd>
 												<div style="width:90%">
@@ -79,13 +79,19 @@
 													<span ng-if="value.status == 'not-paid'">未付款</span>
 													<span ng-if="value.status == 'paid'">已付款</span>
 													<span ng-if="value.status == 'expressed'">已发货</span>
+													<span ng-if="value.status == 'cancelled'">已取消</span>
 												</span>
                                                 <button ng-click="pay(value.orderId,$event)" ng-if="value.status == 'not-paid'" class="pull-right btn btn-danger">付款</button>
+                                                <button ng-click="showCancel(key,$event)" ng-if="value.status == 'not-paid' || value.status == 'not-approved'" style="margin-right:5px;" class="pull-right btn btn-danger">{{value.cancel ?'关闭':'取消订单'}}</button>
 											</dd>
 										</dl>
 									</div>
 								</a>
 							</div>
+                            <div class="cancel" ng-show="value.cancel">
+                                <input type="text" ng-model="value.reason" placeholder="请输入取消理由">
+                                <button ng-click='cancelOrder(key)' class="btn btn-warning">确认</button>
+                            </div>                            
 						</li>
 					</ul>
 				</div>
@@ -125,6 +131,7 @@
 			<span ng-if="currentShop.status == 'not-paid'">未付款</span>
 			<span ng-if="currentShop.status == 'paid'">已付款</span>
 			<span ng-if="currentShop.status == 'expressed'">已发货</span>
+			<span ng-if="currentShop.status == 'cancelled'">已取消</span>
 		</span> 
         <button ng-click="pay(currentShop.orderId,$event)" ng-if="currentShop.status == 'not-paid'" class="pull-right btn btn-danger">付款</button>
 	</p>
@@ -134,5 +141,8 @@
 	<p class="address">{{currentShop.buyer.addr}}</p>
 	<p ng-if="currentShop.status == 'expressed'">
 		物流信息：{{currentShop.express.name}}&nbsp;&nbsp;{{currentShop.express.id}}
+	</p>
+	<p ng-if="currentShop.status == 'cancelled'">
+		取消理由：{{currentShop.reason}}
 	</p>
 </div>

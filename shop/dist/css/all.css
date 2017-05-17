@@ -388,6 +388,21 @@ embed {
     cursor: pointer;
 }
 
+.cancel input{
+    width: 80%;
+    height: 34px;
+    margin: 5px 0 5px 1%;
+    padding-left: 5px;
+    border: 1px solid #ccc;
+}
+.cancel button{
+    width: 17%;
+}
+
+.add_time span{
+    text-decoration: underline;
+}
+
 #contact {
   position: fixed;
   width: 100%;

@@ -75,7 +75,7 @@ angular.module("ngTouch", [])
     };
 });
 
-app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $urlRouterProvider ) {
+app.config(['$stateProvider','$urlRouterProvider','$httpProvider',function( $stateProvider , $urlRouterProvider,$httpProvider) {
 	$urlRouterProvider.otherwise('/search-by-name');
 	$stateProvider
 	.state('home',{
@@ -129,8 +129,23 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		templateUrl:'dist/tpls/contact.html',
 		controller:'contact'
 	})
+    
+    //$httpProvider.interceptors.push('myInterceptor');
 }]);
 
+/*app.factory('myInterceptor' ["$rootScope",'dailog', function ($rootScope,dailog) {  
+    var timestampMarker = {  
+        request: function (config) {  
+            dailog.showLoad();  
+            return config;  
+        },  
+        response: function (response) { 
+            dailog.hideLoad();  
+            return response;  
+        }  
+    };  
+    return timestampMarker;  
+}]);*/ 
 
 app.controller('index', ['$scope','$location','weixin','dailog','searchByName', function($scope,$location,weixin,dailog,searchByName){
 	console.log(weixin.getUserInfo());
@@ -225,12 +240,13 @@ app.controller('cart', ['$scope','cart','weixin','$rootScope','$state','$timeout
 }]);
 
 app.controller('order', ['$scope','order','weixin','$state','dailog', function($scope,order,weixin,$state,dailog){
-    weixin.config();
-	order.getOrdersById(weixin.getUserInfo().openId).then(function(obj){
-		dailog.hideLoad();
-		$scope.orders=obj.data;		
-	})
-	$scope.current=false;    
+    $scope.getOrder=function(){
+        order.getOrdersById(weixin.getUserInfo().openId).then(function(obj){
+            dailog.hideLoad();
+            $scope.orders=obj.data;		
+        })
+    }	
+
 	$scope.showCurrent=function(key){
         $scope.scrollTop=document.body.scrollTop;
 		$scope.currentShop = $scope.orders[key];
@@ -238,8 +254,9 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
 	};
 	$scope.hideCurrent=function(){
         $scope.current=false;
-        $scope.$apply();
-        document.body.scrollTop=$scope.scrollTop;		
+        setTimeout(function(){
+            document.body.scrollTop=$scope.scrollTop;
+        },100)        
 	}
 	$scope.goback=function(){
 		$state.go(-1);
@@ -248,6 +265,27 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
         e.stopPropagation();
         weixin.pay(orderId);
     }
+    $scope.showCancel=function(index,e){
+        e.stopPropagation();
+        $scope.orders[index].cancel=!$scope.orders[index].cancel;
+    }
+    $scope.cancelOrder=function(index){
+        if(!$scope.orders[index].reason)  return;
+        order.cancel({
+            orderId:$scope.orders[index].orderId,
+            ownerOpenId:$scope.orders[index].ownerOpenId,
+            reason:$scope.orders[index].reason
+        }).success(function(data){
+            dailog.hideLoad();
+            if(data.msg=='ok'){                
+                $scope.getOrder();
+            }
+        })
+    }
+
+    weixin.config();
+	$scope.current=false;
+    $scope.getOrder();
 }]);
 
 app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder','cart','$state', function($scope,$rootScope,weixin,dailog,checkOrder,cart,$state){
@@ -924,6 +962,14 @@ app.factory('order', ['$http', 'host','dailog', function($http, host,dailog) {
                 data:option,
                 url:host + '/ds/order/expressed'
             })
+        },
+        cancel:function(option){
+            dailog.showLoad();
+            return $http({
+                method:'post',
+                data:option,
+                url:host +'/ds/order/cancel'
+            })
         }
     };
 }]);
@@ -1113,60 +1159,56 @@ ownerOrderId:***
 
 
 /*
-var menu = {
-     "button":[
-     {  
-          "type":"click",
-          "name":"资讯",
-          "key":"IC_NEWS"
-      },
-      {
-           "name":"商城",
-           "sub_button":[
-           {  
-               "type":"view",
-               "name":"搜型号",
-               "url":"http://chip.jymao.com/search-by-name"
-            },
+取消订单:
+POST /ds/order/cancel
+参数:
+orderId
+ownerOpenId
+reason 取消理由
+
+只有not-approved, not-paid订单可以取消
+
+后台管理可以取消所有用户的未付款订单
+手机端 可以取消自己的未付款订单
+
+取消后, 订单状态 设置为  cancelled
+*/
+
+/*
+get ds/g/Part?condition[name]=?
+
+*/
+
+/*
+添加/修改部件
+POST /ds/part
+参数格式:
+{
+    name
+    icBuy:[{
+        name: 分销商名称(应该是  ic购商城),
+        "parts":[
             {
-               "type":"view",
-               "name":"搜PDF",
-               "url":"http://chip.jymao.com/search-pdf"
-            },
-            {
-               "type":"click",
-               "name":"特价促销",
-               "key":"IC_ON_SALE"
-            },
-            {
-               "type":"click",
-               "name":"我要配单",
-               "key":"IC_UPLOAD_ORDER"
+                "currency":"RMB",
+                "prices":[
+                    {"currency":"RMB","price":"1.01","amount":"1"}
+                ],
+                "maker":"SPARKFUN ELECTRONICS",
             }
-            ]
-       },{
-           "name":"个人中心",
-           "sub_button":[
-               {
-                   "type":"view",
-                   "name":"购物车",
-                   "url":"http://chip.jymao.com/my-shopping-cart"
-               },{
-                   "type":"view",
-                   "name":"我的订单",
-                   "url":"http://chip.jymao.com/my-orders"
-               }, {
-                   "type":"view",
-                   "name":"联系方式",
-                   "url":"http://chip.jymao.com/my-contact"
-               },           
-               {
-                   "type":"click",
-                   "name":"联系客服",
-                   "key":"IC_CUSTOMER_SERVICE"
-                }
-               ]
-       }]
- }
+        ]
+    }]
+}
+
+icBuy就是ic购商城的价格信息, 
+如果该部件没有, 就创建新部件
+如果该name已存在, 则按传入的信息修改部件信息
+*/
+
+/*
+DELETE /ds/part
+name 部件名
+
+删除指定名称的部件
+后台会将传入的名字转为大写字母
 
 */

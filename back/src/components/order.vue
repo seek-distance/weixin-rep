@@ -37,9 +37,21 @@
                         <p>待审核</p>
                         <el-button @click="passApprove(scope.$index)" class="btn btn-info">通过审核</el-button>
                     </div>
+                    <span v-if="scope.row.status == 'cancelled'">已取消</span>
                     <span v-if="scope.row.status == 'not-paid'">未付款</span>
 	                <span v-if="scope.row.status == 'paid'">已付款</span>
 	                <span v-if="scope.row.status == 'expressed'">已发货</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="取消理由">
+                <template scope="scope">
+                    <div v-if="scope.row.status == 'cancelled'">
+                        <p>{{scope.row.reason}}</p>
+                    </div>
+                    <div v-if="scope.row.status == 'not-paid' || scope.row.status == 'not-approved'">
+                        <el-input placeholder='取消理由' v-model='scope.row.reason'></el-input>
+                        <el-button @click="cancelOrder(scope.$index)" type='danger'>取消订单</el-button>
+                    </div>
                 </template>
             </el-table-column>
             <el-table-column label="物流信息">
@@ -146,6 +158,9 @@ export default{
                     if(obj.data[i].status == 'paid'){
                         obj.data[i].express={name:'',id:''};
                     }
+                    if(obj.data[i].reason){
+                        obj.data[i].reason='';
+                    }
                 }
                 let order=[];
                 if(self.orders.length!=0 && olderThan){
@@ -170,6 +185,9 @@ export default{
                     if(obj.data[i].status == 'paid'){
                         obj.data[i].express={name:'',id:''};
                     }
+                    if(!obj.data[i].reason){
+                        obj.data[i].reason='';
+                    }
                 }
                 self.orders = obj.data;
             })
@@ -191,7 +209,6 @@ export default{
             this.changeFrom=JSON.parse(JSON.stringify(this.orders[i]));
             this.changeFrom.totalPrice=(this.changeFrom.totalPrice/100).toFixed(2);
             this.dialog=true;
-            console.log(this.changeFrom)
         },
         change(){
             var self=this;
@@ -201,6 +218,24 @@ export default{
                 this.dialog=false;
                 self.reloadOrder();
             })            
+        },
+        cancelOrder(i){
+            if(!this.orders[i].reason)  return;
+            this.$http.post(this.$host + '/ds/order/cancel',{
+                orderId:this.orders[i].orderId,
+                ownerOpenId:this.orders[i].ownerOpenId,
+                reason:this.orders[i].reason
+            }).then((obj)=>{
+                if(obj.data.msg='ok'){
+                    this.$notify({
+                        title: '取消成功',
+                        message: '取消理由:'+this.orders[i].reason,
+                        type: 'success'
+                    });
+                    this.reloadOrder();
+                }
+            })
+            
         }
     },
     mounted () {
@@ -255,6 +290,11 @@ export default{
         }
         span{
             font-size: 16px;
+        }
+    }
+    .cell{
+        .el-button{
+            margin: 5px 0
         }
     }
 </style>

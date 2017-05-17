@@ -75,7 +75,7 @@ angular.module("ngTouch", [])
     };
 });
 
-app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $urlRouterProvider ) {
+app.config(['$stateProvider','$urlRouterProvider','$httpProvider',function( $stateProvider , $urlRouterProvider,$httpProvider) {
 	$urlRouterProvider.otherwise('/search-by-name');
 	$stateProvider
 	.state('home',{
@@ -129,5 +129,20 @@ app.config(['$stateProvider','$urlRouterProvider',function( $stateProvider , $ur
 		templateUrl:'dist/tpls/contact.html',
 		controller:'contact'
 	})
+    
+    //$httpProvider.interceptors.push('myInterceptor');
 }]);
 
+/*app.factory('myInterceptor' ["$rootScope",'dailog', function ($rootScope,dailog) {  
+    var timestampMarker = {  
+        request: function (config) {  
+            dailog.showLoad();  
+            return config;  
+        },  
+        response: function (response) { 
+            dailog.hideLoad();  
+            return response;  
+        }  
+    };  
+    return timestampMarker;  
+}]);*/ 

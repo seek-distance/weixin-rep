@@ -16,7 +16,7 @@
         </div>
         <div class="content">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item @click.native='change(0)' :to="{ path: '/user' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item @click.native='change(0)' :to="{ path: '/order' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item v-for="(val,key) in bread" :to='val.path'>{{val.name}}</el-breadcrumb-item>
             </el-breadcrumb>
             <div>
@@ -39,7 +39,8 @@ export default {
             nav: [
                 { name: '订单管理', path: 'order'},
                 { name: '用户管理', path: 'user'},
-                { name: '手机号码', path: 'concat'}
+                { name: '手机号码', path: 'concat'},
+                { name: '部件管理', path: 'part'}
             ],
         }
     },

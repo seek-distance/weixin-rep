@@ -316,15 +316,19 @@ app.factory('order', ['$http', 'host','dailog', function($http, host,dailog) {
                 data:option,
                 url:host + '/ds/order/expressed'
             })
+        },
+        cancel:function(option){
+            dailog.showLoad();
+            return $http({
+                method:'post',
+                data:option,
+                url:host +'/ds/order/cancel'
+            })
         }
     };
 }]);
 
 
-
-/*
-https://chip.jymao.com/#/search-by-name
-*/
 
 /*
 服务器: chip.jymao.com
@@ -505,60 +509,56 @@ ownerOrderId:***
 
 
 /*
-var menu = {
-     "button":[
-     {  
-          "type":"click",
-          "name":"资讯",
-          "key":"IC_NEWS"
-      },
-      {
-           "name":"商城",
-           "sub_button":[
-           {  
-               "type":"view",
-               "name":"搜型号",
-               "url":"http://chip.jymao.com/search-by-name"
-            },
+取消订单:
+POST /ds/order/cancel
+参数:
+orderId
+ownerOpenId
+reason 取消理由
+
+只有not-approved, not-paid订单可以取消
+
+后台管理可以取消所有用户的未付款订单
+手机端 可以取消自己的未付款订单
+
+取消后, 订单状态 设置为  cancelled
+*/
+
+/*
+get ds/g/Part?condition[name]=?
+
+*/
+
+/*
+添加/修改部件
+POST /ds/part
+参数格式:
+{
+    name
+    icBuy:[{
+        name: 分销商名称(应该是  ic购商城),
+        "parts":[
             {
-               "type":"view",
-               "name":"搜PDF",
-               "url":"http://chip.jymao.com/search-pdf"
-            },
-            {
-               "type":"click",
-               "name":"特价促销",
-               "key":"IC_ON_SALE"
-            },
-            {
-               "type":"click",
-               "name":"我要配单",
-               "key":"IC_UPLOAD_ORDER"
+                "currency":"RMB",
+                "prices":[
+                    {"currency":"RMB","price":"1.01","amount":"1"}
+                ],
+                "maker":"SPARKFUN ELECTRONICS",
             }
-            ]
-       },{
-           "name":"个人中心",
-           "sub_button":[
-               {
-                   "type":"view",
-                   "name":"购物车",
-                   "url":"http://chip.jymao.com/my-shopping-cart"
-               },{
-                   "type":"view",
-                   "name":"我的订单",
-                   "url":"http://chip.jymao.com/my-orders"
-               }, {
-                   "type":"view",
-                   "name":"联系方式",
-                   "url":"http://chip.jymao.com/my-contact"
-               },           
-               {
-                   "type":"click",
-                   "name":"联系客服",
-                   "key":"IC_CUSTOMER_SERVICE"
-                }
-               ]
-       }]
- }
+        ]
+    }]
+}
+
+icBuy就是ic购商城的价格信息, 
+如果该部件没有, 就创建新部件
+如果该name已存在, 则按传入的信息修改部件信息
+*/
+
+/*
+DELETE /ds/part
+name 部件名
+
+删除指定名称的部件
+后台会将传入的名字转为大写字母
 
 */

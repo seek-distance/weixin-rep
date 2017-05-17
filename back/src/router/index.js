@@ -5,6 +5,7 @@ import login from '@/components/login'
 import user from '@/components/user'
 import order from '@/components/order'
 import concat from '@/components/concat'
+import part from '@/components/part'
 
 Vue.use(Router)
 
@@ -18,7 +19,8 @@ export default new Router({
           {path:'/',component:order},
           {path:'/user',component:user},
           {path:'/order',component:order},
-          {path:'/concat',component:concat}
+          {path:'/concat',component:concat},
+          {path:'/part',component:part}
       ]
     },
     {

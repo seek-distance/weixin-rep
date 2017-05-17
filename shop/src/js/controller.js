@@ -91,12 +91,13 @@ app.controller('cart', ['$scope','cart','weixin','$rootScope','$state','$timeout
 }]);
 
 app.controller('order', ['$scope','order','weixin','$state','dailog', function($scope,order,weixin,$state,dailog){
-    weixin.config();
-	order.getOrdersById(weixin.getUserInfo().openId).then(function(obj){
-		dailog.hideLoad();
-		$scope.orders=obj.data;		
-	})
-	$scope.current=false;    
+    $scope.getOrder=function(){
+        order.getOrdersById(weixin.getUserInfo().openId).then(function(obj){
+            dailog.hideLoad();
+            $scope.orders=obj.data;		
+        })
+    }	
+
 	$scope.showCurrent=function(key){
         $scope.scrollTop=document.body.scrollTop;
 		$scope.currentShop = $scope.orders[key];
@@ -104,8 +105,9 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
 	};
 	$scope.hideCurrent=function(){
         $scope.current=false;
-        $scope.$apply();
-        document.body.scrollTop=$scope.scrollTop;		
+        setTimeout(function(){
+            document.body.scrollTop=$scope.scrollTop;
+        },100)        
 	}
 	$scope.goback=function(){
 		$state.go(-1);
@@ -114,6 +116,27 @@ app.controller('order', ['$scope','order','weixin','$state','dailog', function($
         e.stopPropagation();
         weixin.pay(orderId);
     }
+    $scope.showCancel=function(index,e){
+        e.stopPropagation();
+        $scope.orders[index].cancel=!$scope.orders[index].cancel;
+    }
+    $scope.cancelOrder=function(index){
+        if(!$scope.orders[index].reason)  return;
+        order.cancel({
+            orderId:$scope.orders[index].orderId,
+            ownerOpenId:$scope.orders[index].ownerOpenId,
+            reason:$scope.orders[index].reason
+        }).success(function(data){
+            dailog.hideLoad();
+            if(data.msg=='ok'){                
+                $scope.getOrder();
+            }
+        })
+    }
+
+    weixin.config();
+	$scope.current=false;
+    $scope.getOrder();
 }]);
 
 app.controller('checkOrder', ['$scope','$rootScope','weixin','dailog','checkOrder','cart','$state', function($scope,$rootScope,weixin,dailog,checkOrder,cart,$state){
