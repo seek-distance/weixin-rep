@@ -354,7 +354,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
             return;
         }
         for(var j=0;j<data.length;j++){
-            if (!data[j].distributors || data[j].distributors.length == 0 && data[j].icKeys.length == 0) {
+            if (!data[j].distributors || data[j].distributors.length == 0 && data[j].icKeys.length == 0 && data[j].icBuy.length == 0) {
                 if(!flag){
                     $scope.showList = false;
                     $scope.noList=true;
@@ -364,6 +364,14 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
                 flag=true;
                 $scope.noList=false;
                 $scope.showList = true;
+                for(var i=0; i<data[j].icBuy.length;i++){
+                    if(data[j].icBuy[i].name=='ic购商城'){
+                        data[j].distributors.unshift(data[j].icBuy[i]);
+                    }else{
+                        data[j].distributors.push(data[j].icBuy[i]);
+                    }
+                }
+                
                 for (var i = 0; i < data[j].icKeys.length; i++) {
                     if(data[j].icKeys[i].name=='云汉芯城'){
                         data[j].icKeys[i].name='ic购商城';
@@ -377,7 +385,7 @@ app.controller('searchByName', ['$scope','searchByName','$rootScope','weixin','d
                         data[j].distributors.push(data[j].icKeys[key]);
                     }
                     key++;
-                    /*if(key>10)  break;*/					
+                    /*if(key>10)  break;*/	
                 }
 
                 var oldName = data[j].name;
